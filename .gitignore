@@ -1,0 +1,14 @@
+*.egg-info
+
+*.pyc
+__pycache__
+
+dist/
+build/
+venv/
+
+nosetests.xml
+
+.vscode/
+
+.DS_Store
