@@ -37,7 +37,7 @@ def _parse_id(res):
         return None
 
     if res.status_code != 201:
-        print(res)
+        logger.error(res.text)
         raise Exception("Failed to create 'Coding'")
 
     parts = res.headers["location"].split("/")
