@@ -1,14 +1,18 @@
 {
   "name": "termlink",
   "version": "0.1.0",
-  "description": "Provide a project with an ontology.",
+  "description": "Provide an ontology via Terminology Service's API link.",
   "main": "index.js",
   "repository": "git@bitbucket.org:lifeomic/termlink.git",
   "author": "Taylor Steinberg <taylor.steinberg@lifeomic.com>",
   "license": "MIT",
   "scripts": {
-    "build":  "docker build --tag termlink:$npm_package_version .",
-    "lint":   "docker run termlink:$npm_package_version make check",
-    "test":   "docker run termlink:$npm_package_version make test"
+    "build": "docker build --tag lifeomic/termlink:$npm_package_version .",
+    "prelint": "yarn build",
+    "lint": "docker run lifeomic/termlink:$npm_package_version make check",
+    "pretest": "yarn lint",
+    "test": "docker run lifeomic/termlink:$npm_package_version make test",
+    "prepush": "yarn version && yarn build",
+    "push": "docker push lifeomic/termlink:$npm_package_version"
   }
 }
