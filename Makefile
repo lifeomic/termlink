@@ -1,9 +1,13 @@
-default: clean package
+default: clean check test package install
 
 .PHONY: clean
 clean:
 	rm -rf dist
 	rm -rf termlink.egg-info
+
+.PHONY: check
+check:
+	pylint -f parseable termlink tests | tee pylint.out
 
 .PHONY: test
 test:

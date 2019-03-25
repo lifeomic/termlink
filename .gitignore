@@ -7,6 +7,7 @@ dist/
 build/
 venv/
 
+pylint.out
 nosetests.xml
 
 .vscode/

@@ -1,0 +1,14 @@
+{
+  "name": "termlink",
+  "version": "0.1.0",
+  "description": "Provide a project with an ontology.",
+  "main": "index.js",
+  "repository": "git@bitbucket.org:lifeomic/termlink.git",
+  "author": "Taylor Steinberg <taylor.steinberg@lifeomic.com>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build":  "docker build --tag termlink .",
+    "lint":   "docker run termlink make check",
+    "test":   "docker run termlink make test"
+  }
+}
