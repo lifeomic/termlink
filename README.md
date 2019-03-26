@@ -10,7 +10,7 @@ Download the following tools:
 
 - [Docker](https://docs.docker.com/install/)
 
-Pull the latest version of _Termlink_ from [Docker Hub](https://hub.docker.com/):
+Pull the latest version of _Termlink_ from [Docker Hub](https://hub.docker.com/r/lifeomic/termlink):
 
 ```sh
 $ docker pull lifeomic/termlink
@@ -96,15 +96,19 @@ $ make test
 
 ## Deployment
 
-[TODO]
+This project is packaged using Docker and published as a public image on [Docker Hub](https://hub.docker.com/r/lifeomic/termlink). Publish a new version using the following command.
+
+```sh
+yarn push
+```
+
+You will be promoted to enter a new version, triggered by the `yarn version` command. Please use [SemVer](https://semver.org/) versioning for incrementing versions. To learn more about why SemVer is used, see the section on [_Versioning_](##Versioning) below.
 
 ## Built With
 
 - [Docker](https://www.docker.com/): "Build, Ship, and Run Any App, Anywhere."
 - [Python 3](https://www.python.org/): "Python is a programming language that lets you work quickly and integrate systems more effectively."
 - [Requests](http://docs.python-requests.org/en/master/): "Requests is an elegant and simple HTTP library for Python, built for human beings."
-
-[TODO]
 
 ## Contributing
 
@@ -113,6 +117,16 @@ $ make test
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+
+The following guidelines are provided on the [SemVer]((http://semver.org/)) website:
+
+> Given a version number MAJOR.MINOR.PATCH, increment the:
+> 
+> - MAJOR version when you make incompatible API changes,
+> - MINOR version when you add functionality in a backwards-compatible manner, and
+> - PATCH version when you make backwards-compatible bug fixes.
+> 
+> Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 ## Authors
 
