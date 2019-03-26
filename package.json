@@ -5,10 +5,10 @@
   "main": "index.js",
   "repository": "git@bitbucket.org:lifeomic/termlink.git",
   "author": "Taylor Steinberg <taylor.steinberg@lifeomic.com>",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "scripts": {
-    "build":  "docker build --tag termlink .",
-    "lint":   "docker run termlink make check",
-    "test":   "docker run termlink make test"
+    "build":  "docker build --tag termlink:$npm_package_version .",
+    "lint":   "docker run termlink:$npm_package_version make check",
+    "test":   "docker run termlink:$npm_package_version make test"
   }
 }
