@@ -7,7 +7,10 @@ import argparse
 from urllib.parse import urlparse
 
 from termlink import rxnorm
-from termlink.configuration import logger
+from termlink.configuration import Config
+
+configuration = Config()
+logger = configuration.logger
 
 parser = argparse.ArgumentParser(
     description="A utility program for uploading terminologies"

@@ -5,7 +5,10 @@ This module provides utility methods for iterating over iterables in batches.
 
 import time
 
-from termlink.configuration import logger
+from termlink.configuration import Config
+
+configuration = Config()
+logger = configuration.logger
 
 RATE_LIMIT = 50  # requests per second
 

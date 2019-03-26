@@ -78,7 +78,7 @@ You now have everything you need to start developing on _Termlink_.
 
 ## Testing
 
-This project uses the Python [`unittest`](https://docs.python.org/3/library/unittest.html) framework.
+This project uses the Python [`nose`](https://nose.readthedocs.io/en/latest/index.html) framework.
 
 ### Unit Testing
 

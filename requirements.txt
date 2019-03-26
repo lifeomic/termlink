@@ -6,3 +6,4 @@ grequests==0.3.0
 idna==2.8
 requests==2.21.0
 urllib3==1.24.1
+validators==0.12.4

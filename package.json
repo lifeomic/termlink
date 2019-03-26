@@ -9,7 +9,7 @@
   "scripts": {
     "build": "docker build --tag lifeomic/termlink:$npm_package_version .",
     "prelint": "yarn build",
-    "lint": "docker run lifeomic/termlink:$npm_package_version make check",
+    "lint": "docker run lifeomic/termlink:$npm_package_version make lint",
     "pretest": "yarn lint",
     "test": "docker run lifeomic/termlink:$npm_package_version make test",
     "prepush": "yarn version && yarn build",

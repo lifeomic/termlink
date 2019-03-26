@@ -8,9 +8,12 @@ The download files for RxNorm are provided at https://www.nlm.nih.gov/research/u
 import csv
 import os
 
-from termlink.configuration import logger
+from termlink.configuration import Config
 from termlink.codings import Coding, upload as create_codings
 from termlink.relationships import Relationship, create as create_relationships
+
+configuration = Config()
+logger = configuration.logger
 
 _RXCONSO_PATH = "rrf/RXNCONSO.rrf"
 _RXCONSO_FIELDS = [

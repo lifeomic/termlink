@@ -1,107 +1,107 @@
 """
 Utility method for loading properties form the configuration file and environment variables.
 """
+from dataclasses import dataclass
+from typing import Any
 
 import configparser
 import logging
 import os
+import validators
 
-from urllib.parse import urlparse
+_DEFAULT_ENV = "DEFAULT"
 
-_CONFIG = "config.ini"
-_ENV = "DEFAULT"
+# A simple default configuration that is used for testing and bootstrapping
+_DEFAULT_CONF = {
 
-LOCATION = os.getenv("CONFIG", _CONFIG)
+    'API_URL': 'http://localhost:8080',
 
-config = configparser.ConfigParser()
-config.read(LOCATION)
+    'LO_ACCOUNT': 'Test Account',
+    'LO_USER': 'Test User',
+    'LO_PROJECT': 'Test Project',
+    'LO_API_KEY': 'Test API Key'
+}
 
-env = os.getenv("ENV", _ENV)
+@dataclass
+class Config():
+    """A configuration object.
 
-logger = logging.getLogger("termlink")
-logging.basicConfig()
-if env == "test":
-    logger.setLevel(logging.DEBUG)
-else:
-    logger.setLevel(logging.INFO)
+    An object for reading configuration properties. Properties are injected with
+    the following priority. Properties with higher priority overwrite those
+    with lower priority.
 
-# If the environment is not in the configuration file revert to default configuration.
-environment = env
-if environment not in config:
-    logger.warning("Environment '%s' not in configuration file.", environment)
-    environment = _ENV
-
-
-def get_property(prop):
-    """Reads property from configuration file.
-
-    The environment of the configuration file that is read from is based on the
-    environment variable 'ENV'.
-
-    Parameters
-    ----------
-    prop : str
-        Name of property
-
-    Returns
-    -------
-    str
-        Value of property in configuration file
+    1. Environment in the 'config.ini' file set by the 'ENV' environment variable.
+    2. The 'DEFAULT' enviornment in 'config.ini'
+    3. Default configuration from the 'conf' dict above.
     """
-    logger.debug(
-        "Reading property '%s' from '%s' environment configuration",
-        prop, environment
-    )
-    return config[environment][prop]
 
+    logger: Any
 
-def get_user():
-    """Gets the LO_USER environment variable"""
-    return os.environ.get("LO_USER")
+    def __init__(self):
 
+        environment = os.getenv("ENV", _DEFAULT_ENV)
 
-def get_account():
-    """Gets the LO_ACCOUNT environment variable"""
-    return os.environ.get("LO_ACCOUNT")
+        # Create an application logger
+        logger = logging.getLogger("termlink")
+        logging.basicConfig()
+        if environment == "test":
+            logger.setLevel(logging.DEBUG)
+        else:
+            logger.setLevel(logging.INFO)
 
+        logger.info("The logging level has been set to %s", logger.level)
+        self.logger = logger
 
-def get_project():
-    """Gets the LO_PROJECT environment variable"""
-    return os.environ.get("LO_PROJECT")
+        # Import the application configuration
+        config_file = os.getenv("CONFIG", "config.ini")
 
+        parser = configparser.ConfigParser()
+        parser.read(config_file)
 
-def get_access_key():
-    """Gets the LO_ACCESS_KEY environment variable"""
-    return os.environ.get("LO_ACCESS_KEY")
+        if environment not in parser:
+            environment = _DEFAULT_ENV
 
+        self._config = {
+            **_DEFAULT_CONF,
+            **parser[_DEFAULT_ENV],
+            **parser[environment],
+            **os.environ
+        }
 
-def get_url():
-    """Gets the API url based on the configuration properties"""
+    def get_property(self, property_name):
+        """Get a property value from the configuration.
 
-    protocol = get_property("PROTOCOL")
-    if protocol is None:
-        raise Exception("'PROTOCOL' is required")
+        Args:
+            property_name (str):    A name, or key, of a property
 
-    hostname = get_property("HOSTNAME")
-    if hostname is None:
-        raise Exception("'HOSTNAME' is required")
+        Returns:
+            The property value associated with the property_name
+        """
 
-    port = get_property("PORT")
-    if port is None:
-        raise Exception("'PORT' is required")
+        if property_name not in self._config.keys(): # avoid KeyError
+            return None
 
-    url = urlparse("%s://%s:%s" % (protocol, hostname, port)).geturl()
-    return url
+        return self._config[property_name]
+
+    def is_valid(self):
+        """Asserts that the configuration is correct.
+
+        This method checks various required properties for existence and
+        checks some properties for proper formatting.
+        """
+
+        # Validate that the API URL is properly formatted
+        return validators.url(self.get_property('API_URL'))
 
 
 def get_auth_headers():
     """Gets HTTP headers with authentication"""
 
-    account = get_account()
+    account = None
     if account is None:
         raise Exception("'account' is required")
 
-    access_key = get_access_key()
+    access_key = None
     if access_key is None:
         raise Exception("'access_key' is required")
 

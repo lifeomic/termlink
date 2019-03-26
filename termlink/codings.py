@@ -9,13 +9,17 @@ from urllib.parse import urljoin
 import grequests
 
 from termlink import configuration, sessions
+from termlink.api import build_authentication_headers
 from termlink.batches import batch as _batch
-from termlink.configuration import logger
+from termlink.configuration import Config
 
-_URL = configuration.get_url()
-_PATH = "/v1/terminology/projects/%s/codings" % configuration.get_project()
+configuration = Config()
+logger = configuration.logger
+
+_URL = configuration.get_property('API_URL')
+_PATH = "/v1/terminology/projects/%s/codings" % configuration.get_property('LO_USER')
 _ENDPOINT = urljoin(_URL, _PATH)
-_HEADERS = configuration.get_auth_headers()
+_HEADERS = build_authentication_headers()
 _SESSION = sessions.get_session()
 
 
