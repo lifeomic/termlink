@@ -46,7 +46,7 @@ class Client:
         self.url = url
 
     @limits(calls=20_000, period=FIVE_MINUTES)
-    def request(self, method, path, data):
+    def request(self, method, path=None, data=None):
         """
         A facade around :func:`requests.request` that provides rate limiting.
 
@@ -58,5 +58,5 @@ class Client:
         Returns:
             A :class:`Response <Response>` object
         """
-        url = urljoin(self.url, path)
+        url = urljoin(self.url, path) if path else self.url
         return self.session.request(method, url, json=data)
