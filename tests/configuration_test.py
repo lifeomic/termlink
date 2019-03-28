@@ -16,11 +16,7 @@ def test_logger_is_configured():
     ok_(configuration.logger)
 
 
-def test_api_url():
     """Checks the default API URL is set"""
-    ok_(configuration.get_property('API_URL'))
-
-
 def test_lifeomic_account():
     """Checks the default LifeOmic account is set"""
     ok_(configuration.get_property('LO_ACCOUNT'))
