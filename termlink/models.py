@@ -1,6 +1,6 @@
 """Model representations of API interfaces"""
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 from termlink.configuration import Config
 from termlink.client import Client
@@ -27,10 +27,10 @@ class Coding:
         code (str):     Symbol in syntax defined by the system
         display (str):  Representation defined by the system
     """
-    system: str
-    version: str
-    code: str
-    display: str
+    system: str = None
+    version: str = None
+    code: str = None
+    display: str = None
 
     @staticmethod
     def create(coding, project=_configuration.get_property('LO_PROJECT'), client=_client):
@@ -53,21 +53,7 @@ class Coding:
 
     def to_json(self):
         """Converts :this: into a JSON object"""
-        o = {}
-
-        if self.system is not None:
-            o["system"] = self.system
-
-        if self.version is not None:
-            o["version"] = self.version
-
-        if self.code is not None:
-            o["code"] = self.code
-
-        if self.display is not None:
-            o["display"] = self.display
-
-        return o
+        return {k : v for k, v in asdict(self).items() if v is not None}
 
 
 @dataclass
@@ -105,8 +91,4 @@ class Relationship:
 
     def to_json(self):
         """Converts :this: into a JSON object"""
-        return {
-            "equivalence": self.equivalence,
-            "source": self.source,
-            "target": self.target,
-        }
+        return {k : v for k, v in asdict(self).items() if v is not None}

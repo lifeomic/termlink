@@ -5,22 +5,9 @@ This module is used to configure and create request sessions.
 
 import requests
 
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
-
 from termlink.configuration import Config
 
 configuration = Config()
-
-_RETRIES = Retry(
-    total=5,
-    backoff_factor=1,
-    status_forcelist=[
-        403,
-        500,
-        502,
-        504])
-
 
 class Session(requests.Session):
     """An extended :class`<requests.Session>`.
