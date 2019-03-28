@@ -63,8 +63,11 @@ class Config:
     def __getattr__(self, name):
         return getattr(self.instance, name)
 
-    def get_property(self, property_name):
+    def get_property(self, property_name, default=None):
         """Get a property value from the configuration.
+
+        The os environment variables are first checked. If the property
+        does not exists there it is read from the configuration file.
 
         Args:
             property_name (str):    A name, or key, of a property
@@ -72,7 +75,10 @@ class Config:
         Returns:
             The property value associated with the property_name
         """
-        return self.parser.get(_environment, property_name)
+        if property_name in os.environ:
+            return os.environ[property_name]
+
+        return self.parser.get(_environment, property_name, fallback=default)
 
     def is_valid(self):
         """Asserts that the configuration is correct.
