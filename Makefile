@@ -11,7 +11,7 @@ lint:
 
 .PHONY: test
 test:
-	ENV=test nosetests --verbose -w tests
+	ENV=TEST nosetests --verbose -w tests
 
 .PHONY: package
 package:

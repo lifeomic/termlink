@@ -30,7 +30,7 @@ Note: The best way to manage API keys is using the [LifeOmic CLI](https://github
 Run it.
 
 ```sh
-$ docker run --env-file lifeomic.env -e LO_PROJECT=<your project> --network=host termlink python -m termlink --help
+$ docker run --env-file lifeomic.env -e LO_PROJECT=<your project> lifeomic/termlink python -m termlink --help
 ```
 
 Note: You can obtain your project identifier using the [LifeOmic CLI](https://github.com/lifeomic/cli).

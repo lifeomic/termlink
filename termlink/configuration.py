@@ -1,75 +1,73 @@
 """
 Utility method for loading properties form the configuration file and environment variables.
 """
-from dataclasses import dataclass
-from typing import Any
 
 import configparser
 import logging
 import os
 import validators
 
-_DEFAULT_ENV = "DEFAULT"
+# Relative location of configuration file
+_PROGRAM_CONFIG = '../config.ini'
 
-# A simple default configuration that is used for testing and bootstrapping
-_DEFAULT_CONF = {
+_environment = os.getenv("ENV", 'DEFAULT').upper()
 
-    'API_URL': 'http://localhost:8080',
+class Config:
+    """A configuration singleton"""
 
-    'LO_ACCOUNT': 'Test Account',
-    'LO_USER': 'Test User',
-    'LO_PROJECT': 'Test Project',
-    'LO_API_KEY': 'Test API Key'
-}
+    class __Config:
+        """A configuration supplier.
 
-@dataclass
-class Config():
-    """A configuration object.
+        An object for reading configuration properties. Properties are injected with
+        the following priority. Properties with higher priority overwrite those
+        with lower priority.
 
-    An object for reading configuration properties. Properties are injected with
-    the following priority. Properties with higher priority overwrite those
-    with lower priority.
+        1. Program defaults
+        2. The 'DEFAULT' section in 'config.ini'
+        3. The environment in the 'config.ini' file set by the 'ENV' environment variable
+        4. Runtime system environment variables
+        """
 
-    1. Environment in the 'config.ini' file set by the 'ENV' environment variable.
-    2. The 'DEFAULT' enviornment in 'config.ini'
-    3. Default configuration from the 'conf' dict above.
-    """
+        def __init__(self):
 
-    logger: Any
+            # Create an application logger
+            logger = logging.getLogger("termlink")
+            logging.basicConfig()
+
+            # Set the logging level
+            if _environment == "TEST":
+                logger.setLevel(logging.DEBUG)
+            else:
+                logger.setLevel(logging.INFO)
+
+            logger.info("The logging level has been set to %s", logger.level)
+
+            parser = configparser.ConfigParser(os.environ)
+            
+            # Get the absolute path based on the execution directory
+            root = os.path.abspath(os.path.dirname(__file__))
+            config = os.path.join(root, _PROGRAM_CONFIG)
+            
+            configs = [config]
+            parser.read(configs)
+
+            self.logger = logger
+            self.parser = parser
+
+    instance = None
 
     def __init__(self):
+        if not Config.instance:
+            Config.instance = Config.__Config()
 
-        environment = os.getenv("ENV", _DEFAULT_ENV)
+    def __getattr__(self, name):
+        return getattr(self.instance, name)
 
-        # Create an application logger
-        logger = logging.getLogger("termlink")
-        logging.basicConfig()
-        if environment == "test":
-            logger.setLevel(logging.DEBUG)
-        else:
-            logger.setLevel(logging.INFO)
-
-        logger.info("The logging level has been set to %s", logger.level)
-        self.logger = logger
-
-        # Import the application configuration
-        config_file = os.getenv("CONFIG", "config.ini")
-
-        parser = configparser.ConfigParser()
-        parser.read(config_file)
-
-        if environment not in parser:
-            environment = _DEFAULT_ENV
-
-        self._config = {
-            **_DEFAULT_CONF,
-            **parser[_DEFAULT_ENV],
-            **parser[environment],
-            **os.environ
-        }
-
-    def get_property(self, property_name):
+    def get_property(self, property_name, default=None):
         """Get a property value from the configuration.
+
+        The os environment variables are first checked. If the property
+        does not exists there it is read from the configuration file.
 
         Args:
             property_name (str):    A name, or key, of a property
@@ -77,11 +75,10 @@ class Config():
         Returns:
             The property value associated with the property_name
         """
+        if property_name in os.environ:
+            return os.environ[property_name]
 
-        if property_name not in self._config.keys(): # avoid KeyError
-            return None
-
-        return self._config[property_name]
+        return self.parser.get(_environment, property_name, fallback=default)
 
     def is_valid(self):
         """Asserts that the configuration is correct.
@@ -92,20 +89,3 @@ class Config():
 
         # Validate that the API URL is properly formatted
         return validators.url(self.get_property('API_URL'))
-
-
-def get_auth_headers():
-    """Gets HTTP headers with authentication"""
-
-    account = None
-    if account is None:
-        raise Exception("'account' is required")
-
-    access_key = None
-    if access_key is None:
-        raise Exception("'access_key' is required")
-
-    return {
-        "Authorization": "Bearer %s" % access_key,
-        "LifeOmic-Account": account
-    }

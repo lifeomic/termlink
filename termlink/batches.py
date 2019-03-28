@@ -18,7 +18,7 @@ def batch(iterable, n=1, sleep=0):
     Traverses over an iterable in batches of size n sleeping :sleep: seconds
     between batches.
 
-    Arguments:
+    Args:
         iterable:   An iterable
         n:          Size of each batch
         sleep:      Number of seconds to sleep between batches
