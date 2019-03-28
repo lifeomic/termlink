@@ -2,15 +2,21 @@
 
 from urllib.parse import urljoin, urlparse
 
-from ratelimit import limits
+from ratelimit import limits, RateLimitException
+from backoff import on_exception, expo
 
 from termlink.adapter import DEFAULT as DEFAULT_ADAPTER
 from termlink.configuration import Config
 from termlink.session import Session
 
-FIVE_MINUTES = 300
+_DEFAULT_RATE_LIMIT_MAX_RETRIES = 3
 
 _configuration = Config()
+
+_rate_limit = int(_configuration.get_property('API_RATE_LIMIT'))
+_rate_limit_period = int(_configuration.get_property('API_RATE_LIMIT'))
+_rate_limit_max_retries = int(_configuration.get_property('API_RATE_LIMIT_MAX_RETIRES', _DEFAULT_RATE_LIMIT_MAX_RETRIES))
+
 
 class Client:
     """An HTTP client to communicate with the API"""
@@ -45,7 +51,8 @@ class Client:
         self.session = session
         self.url = url
 
-    @limits(calls=20_000, period=FIVE_MINUTES)
+    @on_exception(expo, RateLimitException, max_tries=_rate_limit_max_retries)
+    @limits(calls=_rate_limit, period=_rate_limit_period)
     def request(self, method, path=None, data=None):
         """
         A facade around :func:`requests.request` that provides rate limiting.

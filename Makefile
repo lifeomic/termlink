@@ -1,7 +1,8 @@
-default: clean check test package install
+default: clean lint test package
 
 .PHONY: clean
 clean:
+	rm -rf build
 	rm -rf dist
 	rm -rf termlink.egg-info
 
@@ -15,8 +16,8 @@ test:
 
 .PHONY: package
 package:
-	python setup.py sdist
+	python setup.py sdist bdist_wheel
 
-.PHONY: install
-install:
-	python setup.py install
+.PHONY: deploy
+deploy:
+	python -m twine upload dist/*
