@@ -22,7 +22,7 @@ Create an environment variables file containing your LifeOmic account, user and 
 $ cat lifeomic.env
 LO_ACCOUNT=<your account>
 LO_USER=<your username>
-LO_ACCESS_KEY=<your access key>
+LO_API_KEY=<your api key>
 ```
 
 Note: The best way to manage API keys is using the [LifeOmic CLI](https://github.com/lifeomic/cli). You can also create an API key using the [Precision Health Cloud](https://docs.us.lifeomic.com/user-guides/api-keys/).
