@@ -1,0 +1,11 @@
+language: python
+
+services:
+  - docker
+
+script: yarn test
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
