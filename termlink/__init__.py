@@ -1,3 +1,5 @@
+"""Configures project for PyPI publication"""
+
 import json
 
 _PACKAGE_FILE = '../package.json'

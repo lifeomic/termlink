@@ -18,7 +18,7 @@ def test_coding_create():
 
     adapter = Adapter()
     adapter.register_uri('POST', base)
-    
+
     url = urljoin(base, "/v1/terminology/projects/%s/codings" % project)
     client = Client(url=url, adapter=adapter)
 
@@ -45,6 +45,7 @@ def test_coding_create():
 
     eq_(_id, res)
 
+
 def test_relationship_create():
     """Checks that `Relationship` can be created"""
 
@@ -53,7 +54,7 @@ def test_relationship_create():
 
     adapter = Adapter()
     adapter.register_uri('POST', base)
-    
+
     url = urljoin(base, "/v1/terminology/projects/%s/relationships" % project)
     client = Client(url=url, adapter=adapter)
 
@@ -128,6 +129,7 @@ def test_convert_partial_coding_to_json():
     res = coding.to_json()
 
     eq_(exp, res)
+
 
 def test_convert_relationship_to_json():
     """Checks converting `Relationship` to JSON"""
