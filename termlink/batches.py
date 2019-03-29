@@ -5,7 +5,10 @@ This module provides utility methods for iterating over iterables in batches.
 
 import time
 
-from termlink.configuration import logger
+from termlink.configuration import Config
+
+configuration = Config()
+logger = configuration.logger
 
 RATE_LIMIT = 50  # requests per second
 
@@ -15,7 +18,7 @@ def batch(iterable, n=1, sleep=0):
     Traverses over an iterable in batches of size n sleeping :sleep: seconds
     between batches.
 
-    Arguments:
+    Args:
         iterable:   An iterable
         n:          Size of each batch
         sleep:      Number of seconds to sleep between batches

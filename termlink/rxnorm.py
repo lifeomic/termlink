@@ -8,9 +8,11 @@ The download files for RxNorm are provided at https://www.nlm.nih.gov/research/u
 import csv
 import os
 
-from termlink.configuration import logger
-from termlink.codings import Coding, upload as create_codings
-from termlink.relationships import Relationship, create as create_relationships
+from termlink.configuration import Config
+from termlink.models import Coding, Relationship
+
+configuration = Config()
+logger = configuration.logger
 
 _RXCONSO_PATH = "rrf/RXNCONSO.rrf"
 _RXCONSO_FIELDS = [
@@ -60,6 +62,7 @@ def _to_equivalence(rel):
     switch = {"RB": "subsumes", "RN": "specializes", "RO": "relatedto"}
     return switch[rel]
 
+
 def upload(root):
     """Uploads the RxNorm dataset"""
     concepts_and_atoms_and_codings = []
@@ -84,7 +87,7 @@ def upload(root):
             concepts_and_atoms_and_codings.append((concept, atom, coding))
 
     codings = [coding for concept, atom, coding in concepts_and_atoms_and_codings]
-    _ids = create_codings(codings)
+    _ids = [Coding.create(coding) for coding in codings]
 
     concepts_id = {}
     atoms_id = {}
@@ -122,4 +125,4 @@ def upload(root):
             relationship = Relationship(equivalence, source, target)
             relationships.append(relationship)
 
-    create_relationships(relationships)
+    [Relationship.create(relationship) for relationship in relationships]

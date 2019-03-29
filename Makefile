@@ -5,13 +5,13 @@ clean:
 	rm -rf dist
 	rm -rf termlink.egg-info
 
-.PHONY: check
-check:
+.PHONY: lint
+lint:
 	pylint -f parseable termlink tests | tee pylint.out
 
 .PHONY: test
 test:
-	ENV=test python -m unittest discover -s tests -p "*_test.py"
+	ENV=TEST nosetests --verbose -w tests
 
 .PHONY: package
 package:

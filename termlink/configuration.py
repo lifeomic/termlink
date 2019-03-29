@@ -5,107 +5,87 @@ Utility method for loading properties form the configuration file and environmen
 import configparser
 import logging
 import os
+import validators
 
-from urllib.parse import urlparse
+# Relative location of configuration file
+_PROGRAM_CONFIG = '../config.ini'
 
-_CONFIG = "config.ini"
-_ENV = "DEFAULT"
+_environment = os.getenv("ENV", 'DEFAULT').upper()
 
-LOCATION = os.getenv("CONFIG", _CONFIG)
+class Config:
+    """A configuration singleton"""
 
-config = configparser.ConfigParser()
-config.read(LOCATION)
+    class __Config:
+        """A configuration supplier.
 
-env = os.getenv("ENV", _ENV)
+        An object for reading configuration properties. Properties are injected with
+        the following priority. Properties with higher priority overwrite those
+        with lower priority.
 
-logger = logging.getLogger("termlink")
-logging.basicConfig()
-if env == "test":
-    logger.setLevel(logging.DEBUG)
-else:
-    logger.setLevel(logging.INFO)
+        1. Program defaults
+        2. The 'DEFAULT' section in 'config.ini'
+        3. The environment in the 'config.ini' file set by the 'ENV' environment variable
+        4. Runtime system environment variables
+        """
 
-# If the environment is not in the configuration file revert to default configuration.
-environment = env
-if environment not in config:
-    logger.warning("Environment '%s' not in configuration file.", environment)
-    environment = _ENV
+        def __init__(self):
 
+            # Create an application logger
+            logger = logging.getLogger("termlink")
+            logging.basicConfig()
 
-def get_property(prop):
-    """Reads property from configuration file.
+            # Set the logging level
+            if _environment == "TEST":
+                logger.setLevel(logging.DEBUG)
+            else:
+                logger.setLevel(logging.INFO)
 
-    The environment of the configuration file that is read from is based on the
-    environment variable 'ENV'.
+            logger.info("The logging level has been set to %s", logger.level)
 
-    Parameters
-    ----------
-    prop : str
-        Name of property
+            parser = configparser.ConfigParser(os.environ)
+            
+            # Get the absolute path based on the execution directory
+            root = os.path.abspath(os.path.dirname(__file__))
+            config = os.path.join(root, _PROGRAM_CONFIG)
+            
+            configs = [config]
+            parser.read(configs)
 
-    Returns
-    -------
-    str
-        Value of property in configuration file
-    """
-    logger.debug(
-        "Reading property '%s' from '%s' environment configuration",
-        prop, environment
-    )
-    return config[environment][prop]
+            self.logger = logger
+            self.parser = parser
 
+    instance = None
 
-def get_user():
-    """Gets the LO_USER environment variable"""
-    return os.environ.get("LO_USER")
+    def __init__(self):
+        if not Config.instance:
+            Config.instance = Config.__Config()
 
+    def __getattr__(self, name):
+        return getattr(self.instance, name)
 
-def get_account():
-    """Gets the LO_ACCOUNT environment variable"""
-    return os.environ.get("LO_ACCOUNT")
+    def get_property(self, property_name, default=None):
+        """Get a property value from the configuration.
 
+        The os environment variables are first checked. If the property
+        does not exists there it is read from the configuration file.
 
-def get_project():
-    """Gets the LO_PROJECT environment variable"""
-    return os.environ.get("LO_PROJECT")
+        Args:
+            property_name (str):    A name, or key, of a property
 
+        Returns:
+            The property value associated with the property_name
+        """
+        if property_name in os.environ:
+            return os.environ[property_name]
 
-def get_access_key():
-    """Gets the LO_ACCESS_KEY environment variable"""
-    return os.environ.get("LO_ACCESS_KEY")
+        return self.parser.get(_environment, property_name, fallback=default)
 
+    def is_valid(self):
+        """Asserts that the configuration is correct.
 
-def get_url():
-    """Gets the API url based on the configuration properties"""
+        This method checks various required properties for existence and
+        checks some properties for proper formatting.
+        """
 
-    protocol = get_property("PROTOCOL")
-    if protocol is None:
-        raise Exception("'PROTOCOL' is required")
-
-    hostname = get_property("HOSTNAME")
-    if hostname is None:
-        raise Exception("'HOSTNAME' is required")
-
-    port = get_property("PORT")
-    if port is None:
-        raise Exception("'PORT' is required")
-
-    url = urlparse("%s://%s:%s" % (protocol, hostname, port)).geturl()
-    return url
-
-
-def get_auth_headers():
-    """Gets HTTP headers with authentication"""
-
-    account = get_account()
-    if account is None:
-        raise Exception("'account' is required")
-
-    access_key = get_access_key()
-    if access_key is None:
-        raise Exception("'access_key' is required")
-
-    return {
-        "Authorization": "Bearer %s" % access_key,
-        "LifeOmic-Account": account
-    }
+        # Validate that the API URL is properly formatted
+        return validators.url(self.get_property('API_URL'))

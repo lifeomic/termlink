@@ -12,8 +12,6 @@ pipeline {
 
             steps {
                 initBuild()
-                sh 'yarn build'
-                sh 'yarn lint'
                 sh 'yarn test'
             }
         }

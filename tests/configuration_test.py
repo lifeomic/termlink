@@ -1,25 +1,42 @@
 """Verifies the 'configuration.py' module."""
-import unittest
+from nose.tools import ok_
 
-from termlink import configuration
+from termlink.configuration import Config
+
+configuration = Config()
 
 
-class TestConfig(unittest.TestCase):
-    """
-    Verifies that various properties are configured correctly.
-    """
-    def test_config_is_loaded(self):
-        """Checks that the 'DEFAULT' environment is available"""
-        self.assertTrue("DEFAULT" in configuration.config)
+def test_configuration_is_loaded():
+    """Checks that the configuration is loaded"""
+    ok_(configuration)
 
-    def test_get_user(self):
-        """Checks that the 'user' is available"""
-        self.assertIsNone(configuration.get_user())
 
-    def test_get_account(self):
-        """Checks that the 'account' is available"""
-        self.assertIsNone(configuration.get_account())
+def test_logger_is_configured():
+    """Checks that the application logger has been configured"""
+    ok_(configuration.logger)
 
-    def test_get_project(self):
-        """Checks that the 'project' is available"""
-        self.assertIsNone(configuration.get_project())
+
+    """Checks the default API URL is set"""
+def test_lifeomic_account():
+    """Checks the default LifeOmic account is set"""
+    ok_(configuration.get_property('LO_ACCOUNT'))
+
+
+def test_lifeomic_user():
+    """Checks the default LifeOmic user is set"""
+    ok_(configuration.get_property('LO_USER'))
+
+
+def test_lifeomic_project():
+    """Checks the default LifeOmic project is set"""
+    ok_(configuration.get_property('LO_PROJECT'))
+
+
+def test_lifeomic_api_key():
+    """Checks the default LifeOmic API key is set"""
+    ok_(configuration.get_property('LO_API_KEY'))
+
+
+def test_the_configuration_is_valid():
+    """Checks that the configuration is valid"""
+    ok_(configuration.is_valid())
