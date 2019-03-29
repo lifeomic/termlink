@@ -96,13 +96,24 @@ $ make test
 
 ## Deployment
 
-This project is packaged using Docker and published as a public image on [Docker Hub](https://hub.docker.com/r/lifeomic/termlink). Publish a new version using the following command.
+The project is deployed in two locations.
+
+1. [PyPI](https://pypi.org/project/termlink/): Python package. 
+2. [Docker Hub](https://hub.docker.com/r/lifeomic/termlink): Packaged runtime environment.
+
+Publish a new version using the command following command:
 
 ```sh
-yarn push
+yarn deploy
 ```
 
-You will be promoted to enter a new version, triggered by the `yarn version` command. Please use [SemVer](https://semver.org/) versioning for incrementing versions. To learn more about why SemVer is used, see the section on [_Versioning_](##Versioning) below.
+The deployment will prompt you multiple inputs.
+
+First, you will be promoted to enter a new version, triggered by the `yarn version` command. Please use [SemVer](https://semver.org/) versioning for incrementing versions. To learn more about why SemVer is used, see the section on [_Versioning_](##Versioning) below.
+
+Second, you will be promoted for PyPI credentials. To gain write access to the PyPI package, contact one of the maintainers listed on the project page [here](https://pypi.org/project/termlink/).
+
+Third, `docker push` will run which requires that you have previously logged in using `docker login`. To gain access to the Docker Hub project, contact one of the owners listed on the project page [here](https://hub.docker.com/r/lifeomic/termlink).
 
 ## Built With
 
