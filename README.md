@@ -30,7 +30,7 @@ Note: The best way to manage API keys is using the [LifeOmic CLI](https://github
 Run it.
 
 ```sh
-$ docker run --env-file lifeomic.env -e LO_PROJECT=<your project> lifeomic/termlink python -m termlink --help
+$ docker run --env-file lifeomic.env -e LO_PROJECT=<your project> lifeomic/termlink --help
 ```
 
 Note: You can obtain your project identifier using the [LifeOmic CLI](https://github.com/lifeomic/cli).
@@ -82,16 +82,10 @@ This project uses the Python [`nose`](https://nose.readthedocs.io/en/latest/inde
 
 ### Unit Testing
 
-The simple way to run unit tests is using `yarn`:
+Run unit tests with `yarn`:
 
 ```sh
 $ yarn test
-```
-
-To speed up development, you can run the tests against your local Python build using the `Makefile`.
-
-```sh
-$ make test
 ```
 
 ## Deployment

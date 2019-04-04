@@ -31,6 +31,7 @@ setup(
     author_email='taylor.steinberg@lifeomic.com',
     packages=find_packages(),
     install_requires=requirements,
+    include_package_data=True,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',

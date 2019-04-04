@@ -7,14 +7,12 @@
   "author": "Taylor Steinberg <taylor.steinberg@lifeomic.com>",
   "license": "MIT",
   "scripts": {
-    "build": "docker build --tag lifeomic/termlink:$npm_package_version .",
-    "prelint": "yarn build",
-    "lint": "docker run lifeomic/termlink:$npm_package_version make lint",
+    "lint": "make lint",
     "pretest": "yarn lint",
-    "test": "docker run lifeomic/termlink:$npm_package_version make test",
-    "prepackage": "yarn build",
-    "package": "docker run lifeomic/termlink:$npm_package_version make package",
-    "predeploy": "yarn version && yarn build && make package",
-    "deploy": "make deploy && docker push lifeomic/termlink:$npm_package_version"
+    "test": "make test",
+    "prepackage": "make clean",
+    "package": "make package && docker build -t lifeomic/termlink .",
+    "predeploy": "yarn version && yarn package",
+    "deploy": "make deploy && docker tag lifeomic/termlink lifeomic/termlink:$npm_package_version && docker push lifeomic/termlink"
   }
 }

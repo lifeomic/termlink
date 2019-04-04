@@ -42,7 +42,7 @@ class Config:
 
             logger.info("The logging level has been set to %s", logger.level)
 
-            parser = configparser.ConfigParser(os.environ)
+            parser = configparser.ConfigParser(os.environ, strict=False)
             
             # Get the absolute path based on the execution directory
             root = os.path.abspath(os.path.dirname(__file__))
