@@ -10,9 +10,9 @@
     "lint": "make lint",
     "pretest": "yarn lint",
     "test": "make test",
+    "postversion": "git push --tags",
     "prepackage": "make clean",
     "package": "make package && docker build -t lifeomic/termlink .",
-    "predeploy": "yarn version && yarn package",
-    "deploy": "make deploy && docker tag lifeomic/termlink lifeomic/termlink:$npm_package_version && docker push lifeomic/termlink"
+    "deploy": "make deploy && docker tag lifeomic/termlink lifeomic/termlink:$npm_package_version && docker push lifeomic/termlink:$npm_package_version && docker push lifeomic/termlink:latest"
   }
 }
