@@ -1,8 +1,8 @@
 # termlink
 
-Provide an ontology via _Terminology Service's_ API link.
+Prepare an ontology and send it to the Precision Health Cloud.
 
-_Termlink_ is a command line client and library for uploading ontologies to LifeOmic's _Precision Health Cloud_. It's goal is to make uploading standardized ontologies easier and to provide utilities for uploading custom ontologies. It provides a simple command line interface for uploading standard ontologies via the [Precision Health Cloud API](https://docs.us.lifeomic.com/) and a Python SDK for building integrations with custom ontologies.
+_Termlink_ is a command line client and library for uploading ontologies to LifeOmic's _Precision Health Cloud_. Its goal is to make uploading standardized ontologies easier and to provide utilities for uploading custom ontologies. It provides a simple command line interface for creating standard ontologies and a Python SDK for building integrations with custom ontologies.
 
 ## Quickstart
 
@@ -10,30 +10,23 @@ Download the following tools:
 
 - [Docker](https://docs.docker.com/install/)
 
-Pull the latest version of _Termlink_ from [Docker Hub](https://hub.docker.com/r/lifeomic/termlink):
+Pull the latest version of _TermLink_ from [Docker Hub](https://hub.docker.com/r/lifeomic/termlink):
 
 ```sh
 $ docker pull lifeomic/termlink
 ```
 
-Create an environment variables file containing your LifeOmic account, user and API key.
-
-```sh
-$ cat lifeomic.env
-LO_ACCOUNT=<your account>
-LO_USER=<your username>
-LO_API_KEY=<your api key>
-```
-
-Note: The best way to manage API keys is using the [LifeOmic CLI](https://github.com/lifeomic/cli). You can also create an API key using the [Precision Health Cloud](https://docs.us.lifeomic.com/user-guides/api-keys/).
-
 Run it.
 
 ```sh
-$ docker run --env-file lifeomic.env -e LO_PROJECT=<your project> lifeomic/termlink --help
+$ docker run lifeomic/termlink --help
 ```
 
-Note: You can obtain your project identifier using the [LifeOmic CLI](https://github.com/lifeomic/cli).
+Import the output ontology into the [Precision Health Cloud](https://lifeomic.com/products/) using the [LifeOmic CLI](https://github.com/lifeomic/cli):
+
+```sh
+$ docker run lifeomic/termlink ... | lo ontologies import <project>
+```
 
 ## Getting Started
 
@@ -41,7 +34,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-The following tools are required to run _Termlink_:
+The following tools are required to run _TermLink_:
 
 - [Docker](https://docs.docker.com/install/)
 - [Git](https://git-scm.com/)

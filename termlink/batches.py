@@ -7,13 +7,17 @@ import time
 
 from termlink.configuration import Config
 
-configuration = Config()
-logger = configuration.logger
+_configuration = Config()
+_logger = _configuration.logger
 
-RATE_LIMIT = 50  # requests per second
+_DEFAULT_RATE_LIMIT = 10
+_DEFAULT_RATE_LIMIT_PERIOD = 1
+
+_rate_limit = int(_configuration.get_property('API_RATE_LIMIT', _DEFAULT_RATE_LIMIT))
+_rate_limit_period = int(_configuration.get_property('API_RATE_LIMIT_PERIOD', _DEFAULT_RATE_LIMIT_PERIOD))
 
 
-def batch(iterable, n=1, sleep=0):
+def batch(iterable, n=1, sleep=_rate_limit_period):
     """
     Traverses over an iterable in batches of size n sleeping :sleep: seconds
     between batches.
@@ -27,12 +31,12 @@ def batch(iterable, n=1, sleep=0):
         For each batch, yields a batch of size n, len(iterable) % n times
     """
 
-    limit = n / (RATE_LIMIT)
+    limit = n / (_rate_limit)
     sleep = sleep if 0 < sleep < limit else limit
-    logger.info("sleep set to %f seconds", sleep)
+    _logger.info("sleep set to %f seconds", sleep)
 
     l = len(iterable)
     for ndx in range(0, l, n):
         yield iterable[ndx : min(ndx + n, l)]
-        logger.info("Processed %s of %s", min(ndx + n, l), l)
+        _logger.info("Processed %s of %s", min(ndx + n, l), l)
         time.sleep(sleep)

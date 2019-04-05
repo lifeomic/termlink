@@ -6,6 +6,7 @@ defined by the RxNorm dataset.
 The download files for RxNorm are provided at https://www.nlm.nih.gov/research/umls/rxnorm/.
 """
 import csv
+import json
 import os
 
 from termlink.configuration import Config
@@ -79,24 +80,20 @@ def upload(root):
             concept = row["RXCUI"]
             atom = row["RXAUI"]
             coding = Coding(
-                "http://www.nlm.nih.gov/research/umls/rxnorm",
-                None,
-                row["CODE"],
-                row["STR"],
+                system="http://www.nlm.nih.gov/research/umls/rxnorm",
+                code=row["CODE"],
+                display=row["STR"],
             )
             concepts_and_atoms_and_codings.append((concept, atom, coding))
 
     codings = [coding for concept, atom, coding in concepts_and_atoms_and_codings]
-    _ids = [Coding.create(coding) for coding in codings]
 
     concepts_id = {}
     atoms_id = {}
     for idx, coding in enumerate(codings):
-        # If a requests fails then the _id is None and needs to be skipped
-        if _ids[idx] is not None:
-            (concept, atom, coding) = concepts_and_atoms_and_codings[idx]
-            concepts_id[concept] = _ids[idx]
-            atoms_id[atom] = _ids[idx]
+        (concept, atom, coding) = concepts_and_atoms_and_codings[idx]
+        concepts_id[concept] = coding
+        atoms_id[atom] = coding
 
     # TODO - Add support for ATOM to ATOM relationships for MMSL and VANDF
     relationships = []
@@ -125,4 +122,5 @@ def upload(root):
             relationship = Relationship(equivalence, source, target)
             relationships.append(relationship)
 
-    [Relationship.create(relationship) for relationship in relationships]
+    print(json.dumps(Relationship.schema().dump(relationships, many=True)))
+
