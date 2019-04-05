@@ -5,12 +5,15 @@ Utility method for loading properties form the configuration file and environmen
 import configparser
 import logging
 import os
+import sys
 import validators
 
 # Relative location of configuration file
 _PROGRAM_CONFIG = '../config.ini'
+_LOGGER_FILENAME = 'stderr.log'
 
 _environment = os.getenv("ENV", 'DEFAULT').upper()
+
 
 class Config:
     """A configuration singleton"""
@@ -32,7 +35,7 @@ class Config:
 
             # Create an application logger
             logger = logging.getLogger("termlink")
-            logging.basicConfig()
+            logging.basicConfig(filename=_LOGGER_FILENAME)
 
             # Set the logging level
             if _environment == "TEST":
@@ -43,11 +46,11 @@ class Config:
             logger.info("The logging level has been set to %s", logger.level)
 
             parser = configparser.ConfigParser(os.environ, strict=False)
-            
+
             # Get the absolute path based on the execution directory
             root = os.path.abspath(os.path.dirname(__file__))
             config = os.path.join(root, _PROGRAM_CONFIG)
-            
+
             configs = [config]
             parser.read(configs)
 

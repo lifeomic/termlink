@@ -11,6 +11,8 @@ venv/
 pylint.out
 nosetests.xml
 
+stderr.log
+
 node_modules/
 
 .vscode/
