@@ -1,6 +1,6 @@
 """Model representations of API interfaces"""
 
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 
 from termlink.configuration import Config

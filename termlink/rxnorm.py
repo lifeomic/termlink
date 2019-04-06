@@ -9,8 +9,12 @@ import csv
 import json
 import os
 
+from urllib.parse import urlparse
+
+from termlink.commands import SubCommand
 from termlink.configuration import Config
 from termlink.models import Coding, Relationship
+from termlink.services import RelationshipService
 
 configuration = Config()
 logger = configuration.logger
@@ -59,13 +63,19 @@ _RXNREL_FIELDS = [
 
 
 def _to_equivalence(rel):
-    """Converts a relationship into an equivalence"""
+    """Converts a RxNorm relationship code into an equivalence"""
     switch = {"RB": "subsumes", "RN": "specializes", "RO": "relatedto"}
     return switch[rel]
 
 
-def upload(root):
-    """Uploads the RxNorm dataset"""
+def get_relationships(uri):
+    """Converts the RxNorm file set into `Relationship`s"""
+
+    if uri.scheme != 'file':
+        raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
+
+    root = uri.path
+
     concepts_and_atoms_and_codings = []
     path = os.path.join(root, _RXCONSO_PATH)
     logger.info("Loading data from '%s'.", path)
@@ -86,7 +96,8 @@ def upload(root):
             )
             concepts_and_atoms_and_codings.append((concept, atom, coding))
 
-    codings = [coding for concept, atom, coding in concepts_and_atoms_and_codings]
+    codings = [coding for concept, atom,
+               coding in concepts_and_atoms_and_codings]
 
     concepts_id = {}
     atoms_id = {}
@@ -122,5 +133,48 @@ def upload(root):
             relationship = Relationship(equivalence, source, target)
             relationships.append(relationship)
 
-    print(json.dumps(Relationship.schema().dump(relationships, many=True)))
+    return relationships
 
+
+class Command(SubCommand):
+    """
+    A `SubCommand` for RxNorm operations
+    """
+
+    @staticmethod
+    def execute(args):
+        """
+        Prints a JSON array of `Relationship` objects to stdout
+
+        Args:
+            args: `argparse` parsed arguments
+            stdout: output stream (default: `sys.stdout`)
+        """
+        uri = urlparse(args.uri)
+        service = Service(uri)
+        relationships = service.get_relationships()
+        dumped = Relationship.schema().dump(relationships, many=True)
+        print(json.dumps(dumped))
+
+
+class Service(RelationshipService):
+    """Converts the RxNorm database"""
+
+    def __init__(self, uri):
+        """
+        Bootstraps a service
+
+        Args:
+            uri: URI to root location of .rrf files
+        """
+
+        if uri.scheme != 'file':
+            raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
+
+        self.uri = uri
+
+    def get_relationships(self):
+        """
+        Parses a list of `Relationship` objects.
+        """
+        return get_relationships(self.uri)
