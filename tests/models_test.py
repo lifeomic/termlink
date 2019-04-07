@@ -1,8 +1,8 @@
 """Verifies the 'models.py' module"""
 
-from nose.tools import eq_
-
 import json
+
+from nose.tools import eq_
 
 from termlink.models import Coding, Relationship
 
@@ -80,7 +80,7 @@ def test_convert_relationship_to_json():
     version = 'version'
     code = 'code'
     display = 'display'
-    
+
     source = Coding(
         system=system,
         version=version,
