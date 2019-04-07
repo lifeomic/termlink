@@ -5,140 +5,56 @@ defined by the RxNorm dataset.
 
 The download files for RxNorm are provided at https://www.nlm.nih.gov/research/umls/rxnorm/.
 """
-import csv
-import json
 import os
 
 from urllib.parse import urlparse
 
+import petl as etl
+
 from termlink.commands import SubCommand
-from termlink.configuration import Config
 from termlink.models import Coding, Relationship
 from termlink.services import RelationshipService
 
-configuration = Config()
-logger = configuration.logger
-
-_RXCONSO_PATH = "rrf/RXNCONSO.rrf"
-_RXCONSO_FIELDS = [
-    "RXCUI",
-    "LAT",
-    "TS",
-    "LUI",
-    "STT",
-    "SUI",
-    "ISPREF",
-    "RXAUI",
-    "SAUI",
-    "SCUI",
-    "SDUI",
-    "SAB",
-    "TTY",
-    "CODE",
-    "STR",
-    "SRL",
-    "SUPPRESS",
-    "CVF",
-]
-
-_RXNREL_PATH = "rrf/RXNREL.rrf"
-_RXNREL_FIELDS = [
-    "RXCUI1",
-    "RXAUI1",
-    "STYPE1",
-    "REL",
-    "RXCUI2",
-    "RXAUI2",
-    "STYPE2",
-    "RELA",
-    "RUI",
-    "SRUI",
-    "SAB",
-    "SL",
-    "DIR",
-    "RG",
-    "SUPPRESS",
-    "CVF",
-]
+_RXNCONSO_FIELDS = ["RXCUI", "LAT", "TS", "LUI", "STT", "SUI", "ISPREF", "RXAUI",
+                    "SAUI", "SCUI", "SDUI", "SAB", "TTY", "CODE", "STR", "SRL", "SUPPRESS", "CVF", ]
+_RXNREL_FIELDS = ["RXCUI1", "RXAUI1", "STYPE1", "REL", "RXCUI2", "RXAUI2",
+                  "STYPE2", "RELA", "RUI", "SRUI", "SAB", "SL", "DIR", "RG", "SUPPRESS", "CVF", ]
 
 
-def _to_equivalence(rel):
-    """Converts a RxNorm relationship code into an equivalence"""
-    switch = {"RB": "subsumes", "RN": "specializes", "RO": "relatedto"}
-    return switch[rel]
+def _to_json(rec):
+    """
+    Convert record in table to Relationship as a JSON object
 
+    Record is expected to have the following fields: [ source.CODE, source.STR, 
+    target.CODE, target.STR]
 
-def get_relationships(uri):
-    """Converts the RxNorm file set into `Relationship`s"""
+    Args:
+        rec: A table record
 
-    if uri.scheme != 'file':
-        raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
+    Returns:
+        A new record containing a single field, which is the JSON object
+    """
 
-    root = uri.path
+    source = Coding(
+        system="http://www.nlm.nih.gov/research/umls/rxnorm",
+        code=rec['source.CODE'],
+        display=rec['source.STR']
+    )
 
-    concepts_and_atoms_and_codings = []
-    path = os.path.join(root, _RXCONSO_PATH)
-    logger.info("Loading data from '%s'.", path)
-    with open(path, "r") as f:
-        reader = csv.DictReader(f, delimiter="|", fieldnames=_RXCONSO_FIELDS)
-        for row in reader:
+    target = Coding(
+        system="http://www.nlm.nih.gov/research/umls/rxnorm",
+        code=rec['target.CODE'],
+        display=rec['target.STR']
+    )
 
-            # Skip all vocabularies except RxNorm
-            if row["SAB"] != "RXNORM":
-                continue
+    relationship = Relationship('subsumes', source, target)
 
-            concept = row["RXCUI"]
-            atom = row["RXAUI"]
-            coding = Coding(
-                system="http://www.nlm.nih.gov/research/umls/rxnorm",
-                code=row["CODE"],
-                display=row["STR"],
-            )
-            concepts_and_atoms_and_codings.append((concept, atom, coding))
-
-    codings = [coding for concept, atom,
-               coding in concepts_and_atoms_and_codings]
-
-    concepts_id = {}
-    atoms_id = {}
-    for idx, coding in enumerate(codings):
-        (concept, atom, coding) = concepts_and_atoms_and_codings[idx]
-        concepts_id[concept] = coding
-        atoms_id[atom] = coding
-
-    # TODO - Add support for ATOM to ATOM relationships for MMSL and VANDF
-    relationships = []
-    path = os.path.join(root, _RXNREL_PATH)
-    logger.info("Loading data from '%s'.", path)
-    with open(path, "r") as f:
-        reader = csv.DictReader(f, delimiter="|", fieldnames=_RXNREL_FIELDS)
-        for row in reader:
-
-            # Skip all non RB relationships
-            if row["REL"] != "RB":
-                continue
-
-            # Skip if source is missing
-            if row["RXCUI1"] not in concepts_id:
-                continue
-
-            # Skip if target is missing
-            if row["RXCUI2"] not in concepts_id:
-                continue
-
-            equivalence = _to_equivalence(row["REL"])
-            source = concepts_id[row["RXCUI1"]]
-            target = concepts_id[row["RXCUI2"]]
-
-            relationship = Relationship(equivalence, source, target)
-            relationships.append(relationship)
-
-    return relationships
+    return [relationship.to_json()]
 
 
 class Command(SubCommand):
     """
-    A `SubCommand` for RxNorm operations
+    A command executor for RxNorm operations
     """
 
     @staticmethod
@@ -148,13 +64,11 @@ class Command(SubCommand):
 
         Args:
             args: `argparse` parsed arguments
-            stdout: output stream (default: `sys.stdout`)
         """
         uri = urlparse(args.uri)
         service = Service(uri)
-        relationships = service.get_relationships()
-        dumped = Relationship.schema().dump(relationships, many=True)
-        print(json.dumps(dumped))
+        table = service.get_relationships()
+        etl.io.totext(table, encoding='utf8', template='{relationship}\n')
 
 
 class Service(RelationshipService):
@@ -177,4 +91,28 @@ class Service(RelationshipService):
         """
         Parses a list of `Relationship` objects.
         """
-        return get_relationships(self.uri)
+        path = os.path.join(self.uri.path, 'RXNCONSO.rrf')
+        rxnconso = etl \
+            .fromcsv(path, delimiter='|') \
+            .setheader(_RXNCONSO_FIELDS) \
+            .select(lambda rec: rec['SAB'] == 'RXNORM') \
+            .cut('RXCUI', 'CODE', 'STR')
+
+        source = rxnconso.prefixheader('source.')
+        target = rxnconso.prefixheader('target.')
+
+        path = os.path.join(self.uri.path, 'RXNREL.rrf')
+        rxnrel = etl \
+            .fromcsv(path, delimiter='|') \
+            .setheader(_RXNREL_FIELDS) \
+            .select(lambda rec: rec['SAB'] == 'RXNORM') \
+            .select(lambda rec: rec['STYPE1'] == 'CUI') \
+            .select(lambda rec: rec['STYPE2'] == 'CUI') \
+            .select(lambda rec: rec['REL'] == 'RB') \
+            .cut('RXCUI1', 'RXCUI2')
+
+        return rxnrel \
+            .join(source, lkey='RXCUI1', rkey='source.RXCUI') \
+            .join(target, lkey='RXCUI2', rkey='target.RXCUI') \
+            .rowmap(_to_json, ['source.CODE', 'source.STR', 'target.CODE', 'target.STR']) \
+            .setheader(['relationship'])
