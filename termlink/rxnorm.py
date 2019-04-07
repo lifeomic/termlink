@@ -6,6 +6,7 @@ defined by the RxNorm dataset.
 The download files for RxNorm are provided at https://www.nlm.nih.gov/research/umls/rxnorm/.
 """
 import os
+import json
 
 from urllib.parse import urlparse
 
@@ -68,7 +69,7 @@ class Command(SubCommand):
         uri = urlparse(args.uri)
         service = Service(uri)
         table = service.get_relationships()
-        etl.io.totext(table, encoding='utf8', template='{relationship}\n')
+        etl.io.totext(table, encoding='utf8', template='{relationship} ')
 
 
 class Service(RelationshipService):
