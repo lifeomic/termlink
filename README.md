@@ -13,19 +13,19 @@ Download the following tools:
 Pull the latest version of _TermLink_ from [Docker Hub](https://hub.docker.com/r/lifeomic/termlink):
 
 ```sh
-$ docker pull lifeomic/termlink
+docker pull lifeomic/termlink
 ```
 
 Run it.
 
 ```sh
-$ docker run lifeomic/termlink --help
+docker run lifeomic/termlink --help
 ```
 
 Import the output ontology into the [Precision Health Cloud](https://lifeomic.com/products/) using the [LifeOmic CLI](https://github.com/lifeomic/cli):
 
 ```sh
-$ docker run lifeomic/termlink ... | lo ontologies import <project>
+docker run lifeomic/termlink ... | lo ontologies import <project>
 ```
 
 ## Getting Started
@@ -48,13 +48,13 @@ The following steps will guide you through installing the project locally.
 Clone the `git` repository onto your local machine.
 
 ```sh
-$ git clone git@github.com:lifeomic/termlink.git && cd ./termlink
+git clone git@github.com:lifeomic/termlink.git && cd ./termlink
 ```
 
 Using Python 3, create a `virtualenv` and then activate it.
 
 ```sh
-$ python3 -m venv venv && source venv/bin/activate
+python3 -m venv venv && source venv/bin/activate
 ```
 
 _Note: Your Python binary may be under a different name._
@@ -78,7 +78,7 @@ This project uses the Python [`nose`](https://nose.readthedocs.io/en/latest/inde
 Run unit tests with `yarn`:
 
 ```sh
-$ yarn test
+yarn test
 ```
 
 ## Deployment
@@ -119,16 +119,16 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 The following guidelines are provided on the [SemVer]((http://semver.org/)) website:
 
 > Given a version number MAJOR.MINOR.PATCH, increment the:
-> 
+>
 > - MAJOR version when you make incompatible API changes,
 > - MINOR version when you add functionality in a backwards-compatible manner, and
 > - PATCH version when you make backwards-compatible bug fixes.
-> 
+>
 > Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 ## Authors
 
-* **Taylor Steinberg** - *Initial work* - [tdstein](https://github.com/tdstein)
+- **Taylor Steinberg** - *Initial work* - [tdstein](https://github.com/tdstein)
 
 See also the list of [contributors](https://github.com/lifeomic/termlink/contributors) who participated in this project.
 
