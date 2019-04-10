@@ -69,7 +69,7 @@ class Command(SubCommand):
         uri = urlparse(args.uri)
         service = Service(uri)
         table = service.get_relationships()
-        etl.io.totext(table, encoding='utf8', template='{relationship} ')
+        etl.io.totext(table, encoding='utf8', template='{relationship}\n')
 
 
 class Service(RelationshipService):
