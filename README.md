@@ -63,8 +63,8 @@ Check that your local version of Python is at least version 3.7 by running `pyth
 
 Once you have verified your version of Python is correct, run the following to download all dependencies.
 
-```
-$ pip install -r requirements.txt requirements-dev.txt
+```sh
+pip install -r requirements.txt requirements-dev.txt
 ```
 
 You now have everything you need to start developing on _Termlink_. 
