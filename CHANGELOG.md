@@ -14,8 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.4.0
 ### Changed
-- Refactored to the `rxnorm` command to improve performance.
+- Improved performance of the `rxnorm` sub-command.
 
 ### Fixed
-- Corrected the output of the `rxnorm` command to include the correct concept relationships.
+- Corrected the output of the `rxnorm` sub-command to include the correct concept relationships.
 
