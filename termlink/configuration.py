@@ -81,13 +81,3 @@ class Config:
             return os.environ[property_name]
 
         return self.parser.get(_environment, property_name, fallback=default)
-
-    def is_valid(self):
-        """Asserts that the configuration is correct.
-
-        This method checks various required properties for existence and
-        checks some properties for proper formatting.
-        """
-
-        # Validate that the API URL is properly formatted
-        return validators.url(self.get_property('API_URL'))

@@ -14,8 +14,3 @@ def test_configuration_is_loaded():
 def test_logger_is_configured():
     """Checks that the application logger has been configured"""
     ok_(configuration.logger)
-
-
-def test_the_configuration_is_valid():
-    """Checks that the configuration is valid"""
-    ok_(configuration.is_valid())
