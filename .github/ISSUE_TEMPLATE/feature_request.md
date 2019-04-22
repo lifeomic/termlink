@@ -1,9 +1,7 @@
 ---
-name: Feature request
+name: 🚀Feature request
 about: Suggest an idea to improve our project
 labels: enhancement
-assignees: ''
-
 ---
 
 **Is your feature request related to a problem? Please describe.**
