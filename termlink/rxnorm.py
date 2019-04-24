@@ -6,7 +6,6 @@ defined by the RxNorm dataset.
 The download files for RxNorm are provided at https://www.nlm.nih.gov/research/umls/rxnorm/.
 """
 import os
-import json
 
 from urllib.parse import urlparse
 
@@ -92,7 +91,7 @@ class Service(RelationshipService):
         """
         Parses a list of `Relationship` objects.
         """
-        path = os.path.join(self.uri.path, 'RXNCONSO.rrf')
+        path = os.path.join(self.uri.path, 'RXNCONSO.RRF')
         rxnconso = etl \
             .fromcsv(path, delimiter='|') \
             .setheader(_RXNCONSO_FIELDS) \
@@ -102,7 +101,7 @@ class Service(RelationshipService):
         source = rxnconso.prefixheader('source.')
         target = rxnconso.prefixheader('target.')
 
-        path = os.path.join(self.uri.path, 'RXNREL.rrf')
+        path = os.path.join(self.uri.path, 'RXNREL.RRF')
         rxnrel = etl \
             .fromcsv(path, delimiter='|') \
             .setheader(_RXNREL_FIELDS) \
