@@ -23,7 +23,7 @@ subparsers = parser.add_subparsers(
 )
 
 parser_rxnorm = subparsers.add_parser(
-    "rxnorm", 
+    "rxnorm",
     help="RxNorm provides normalized names for clinical drugs.",
     description="""
     RxNorm provides normalized names for clinical drugs and links its names to
@@ -37,7 +37,8 @@ parser_rxnorm = subparsers.add_parser(
     [1] RxNorm. Retrieved April 22, 2019, from https://www.nlm.nih.gov/research/umls/rxnorm/
     """
 )
-parser_rxnorm.add_argument("uri", metavar="URI", help="resource identifier for files")
+parser_rxnorm.add_argument(
+    "uri", metavar="URI", help="resource identifier for files")
 parser_rxnorm.set_defaults(execute=RxNormCommand.execute)
 
 

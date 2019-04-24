@@ -5,7 +5,6 @@ Utility method for loading properties form the configuration file and environmen
 import configparser
 import logging
 import os
-import validators
 
 # Relative location of configuration file
 _PROGRAM_CONFIG = '../config.ini'
