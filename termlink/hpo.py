@@ -26,7 +26,7 @@ def _to_equivalence_from_scope(scope):
         return {
             'BROAD': 'wider',
             'NARROW': 'narrower',
-            'EXACT': 'equal',
+            'EXACT': 'equivalent',
             'RELATED': 'relatedto'
         }[scope]
     except KeyError:
@@ -123,6 +123,15 @@ class Service(RelationshipService):
         for term in ontology:
             for parent in term.parents:
                 yield _to_json(parent, "specializes", term)
+
+        # alt_id relationships:
+        for term in ontology:
+            for other, values in term.other.items():
+                if other == 'alt_id':
+                    for value in values:
+                        target = Term(id=value, name=term.name, desc=term.desc)
+                        yield _to_json(term, "equal", target)
+                        yield _to_json(target, "equal", term)
 
         # synonym relationships
         for term in ontology:
