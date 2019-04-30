@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/lifeomic/termlink.svg?branch=master)](https://travis-ci.org/lifeomic/termlink)
+[![PyPI status](https://img.shields.io/pypi/status/termlink.svg)](https://pypi.python.org/pypi/termlink/)
+
 
 # termlink
 
