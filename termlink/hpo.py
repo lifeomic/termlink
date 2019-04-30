@@ -90,7 +90,11 @@ class Command(SubCommand):
     @staticmethod
     def execute(args):
         uri = urlparse(args.uri)
-        service = Service(uri)
+        skip_synonyms = args.skip_synonyms
+        skip_alt_ids = args.skip_alt_ids
+
+        service = Service(uri, skip_alt_ids, skip_synonyms)
+
         relationships = service.get_relationships()
         for relationship in relationships:
             print(relationship)
@@ -99,7 +103,7 @@ class Command(SubCommand):
 class Service(RelationshipService):
     "Converts the Human Phenotype Ontology"
 
-    def __init__(self, uri):
+    def __init__(self, uri, skip_alt_ids=False, skip_synonyms=False):
         """Bootstraps a service
 
         Args:
@@ -109,6 +113,8 @@ class Service(RelationshipService):
             raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
 
         self.uri = uri
+        self.skip_synonyms = skip_synonyms
+        self.skip_alt_ids = skip_alt_ids
 
     def get_relationships(self):
         "Parses a list of `Relationship` objects"
@@ -125,20 +131,29 @@ class Service(RelationshipService):
                 yield _to_json(parent, "specializes", term)
 
         # alt_id relationships:
-        for term in ontology:
-            for other, values in term.other.items():
-                if other == 'alt_id':
-                    for value in values:
-                        target = Term(id=value, name=term.name, desc=term.desc)
-                        yield _to_json(term, "equal", target)
-                        yield _to_json(target, "equal", term)
+        if not self.skip_alt_ids:
+            for term in ontology:
+                for other, values in term.other.items():
+                    if other == 'alt_id':
+                        for value in values:
+                            target = Term(
+                                id=value,
+                                name=term.name,
+                                desc=term.desc
+                            )
+                            yield _to_json(term, "equal", target)
 
         # synonym relationships
-        for term in ontology:
-            for synonym in term.synonyms:
-                target = Term(id=term.id, name=synonym.desc, desc=term.desc)
-                equivalence = _to_equivalence_from_scope(synonym.scope)
-                yield _to_json(term, equivalence, target)
+        if not self.skip_synonyms:
+            for term in ontology:
+                for synonym in term.synonyms:
+                    target = Term(
+                        id=term.id,
+                        name=synonym.desc,
+                        desc=term.desc
+                    )
+                    equivalence = _to_equivalence_from_scope(synonym.scope)
+                    yield _to_json(term, equivalence, target)
 
         # todo - lookup concept based on system and code
         # xref relationships

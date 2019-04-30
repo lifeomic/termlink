@@ -40,7 +40,24 @@ parser_hpo.add_argument(
     help="resource identifier for files"
 )
 
+parser_hpo.add_argument(
+    "--skip-alt-ids",
+    dest='skip_alt_ids',
+    action='store_true',
+    help="skips 'alt_id' references"
+)
+
+parser_hpo.add_argument(
+    "--skip-synonyms",
+    dest='skip_synonyms',
+    action='store_true',
+    help="skips 'synonym' references"
+)
+
 parser_hpo.set_defaults(execute=HPOCommand.execute)
+parser_hpo.set_defaults(skip_alt_ids=False)
+parser_hpo.set_defaults(skip_synonyms=False)
+
 
 parser_rxnorm = subparsers.add_parser(
     "rxnorm",
