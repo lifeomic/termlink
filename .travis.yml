@@ -8,11 +8,9 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
-  - pip install -r requirements-site.txt
 
 script: 
   - yarn test
-  - yarn site
 
 notifications:
   email:
@@ -20,6 +18,11 @@ notifications:
     on_failure: change
 
 deploy:
+
+  - provider: script
+    script: yarn site
+    on:
+      tags: true
   
   - provider: pages
     local_dir: site
@@ -31,5 +34,10 @@ deploy:
 
   - provider: script
     script: ./scripts/docker.sh
+    on:
+      tags: true
+
+  - provider: script
+    script: ./scripts/pypi.sh
     on:
       tags: true
