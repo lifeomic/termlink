@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lifeomic/termlink.svg?branch=master)](https://travis-ci.org/lifeomic/termlink)
+
 # termlink
 
 Prepare an ontology and send it to the Precision Health Cloud.
