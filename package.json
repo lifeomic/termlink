@@ -13,6 +13,7 @@
     "postversion": "git push --tags",
     "prepackage": "make clean",
     "package": "make package && docker build -t lifeomic/termlink .",
+    "site": "mkdocs build",
     "deploy": "make deploy && docker tag lifeomic/termlink lifeomic/termlink:$npm_package_version && docker push lifeomic/termlink:$npm_package_version && docker push lifeomic/termlink:latest"
   }
 }
