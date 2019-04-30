@@ -20,10 +20,16 @@ notifications:
     on_failure: change
 
 deploy:
-  provider: pages
-  local_dir: site
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  keep_history: true
-  on:
-    branch: master 
+  
+  - provider: pages
+    local_dir: site
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    keep_history: true
+    on:
+      branch: master
+
+  - provider: script
+    script: ./scripts/docker.sh
+    on:
+      branch: master
