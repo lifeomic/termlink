@@ -10,10 +10,7 @@
     "lint": "make lint",
     "pretest": "yarn lint",
     "test": "make test",
-    "postversion": "git push --tags",
-    "prepackage": "make clean",
-    "package": "make package",
-    "site": "mkdocs build",
-    "deploy": "make deploy"
+    "site": "pip install -r requirements-site.txt && mkdocs build",
+    "postversion": "git push --tags"
   }
 }
