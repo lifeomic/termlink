@@ -108,6 +108,8 @@ class Service(RelationshipService):
 
         Args:
             uri: URI to root location of .obo files
+            skip_alt_ids: Skips 'alt_id' conversions if True
+            skip_synonyms: Skips 'synonym' conversions if True
         """
         if uri.scheme != 'file':
             raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
@@ -117,7 +119,11 @@ class Service(RelationshipService):
         self.skip_alt_ids = skip_alt_ids
 
     def get_relationships(self):
-        "Parses a list of `Relationship` objects"
+        """Parses a list of `Relationship` objects
+
+        Returns:
+            yields `Relationship`s in JSON form
+        """
         ontology = Ontology(self.uri.path)
 
         # child to parent relationships

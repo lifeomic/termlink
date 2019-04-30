@@ -1,3 +1,4 @@
 nose
+parameterized
 pylint
 requests_mock

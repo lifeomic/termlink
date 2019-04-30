@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Prints the help message by default if a valid command is not provided.
+- Updates Docker image to latest pip version
 
 ## 0.4.3
 
