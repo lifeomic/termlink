@@ -37,7 +37,8 @@ deploy:
     on:
       tags: true
 
-  - provider: script
-    script: ./scripts/pypi.sh
+  - provider: pypi
+    user: $TWINE_USERNAME
+    password: $TWINE_PASSWORD
     on:
       tags: true
