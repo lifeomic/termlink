@@ -1,4 +1,4 @@
-"""Uploads RxNorm files.
+"""Handles RxNorm conversion.
 
 This module provides methods to extract, transform and load relationships
 defined by the RxNorm dataset.

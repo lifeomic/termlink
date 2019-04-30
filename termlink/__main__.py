@@ -7,6 +7,7 @@ import argparse
 from termlink.configuration import Config
 
 from termlink.rxnorm import Command as RxNormCommand
+from termlink.hpo import Command as HPOCommand
 
 configuration = Config()
 logger = configuration.logger
@@ -21,6 +22,25 @@ subparsers = parser.add_subparsers(
     title="Commands",
     metavar=""
 )
+
+parser_hpo = subparsers.add_parser(
+    "hpo",
+    help="The Human Phenotype Ontology (HPO) project provides an ontology of medically relevant phenotypes, disease-phenotype annotations, and the algorithms that operate on these.",
+    description="""
+    The Human Phenotype Ontology (HPO) project provides an ontology of medically relevant phenotypes, disease-phenotype annotations, and the algorithms that operate on these. The HPO can be used to support differential diagnostics, translational research, and a number of applications in computational biology by providing the means to compute over the clinical phenotype. The HPO is being used for computational deep phenotyping and precision medicine as well as integration of clinical data into translational research. Deep phenotyping can be defined as the precise and comprehensive analysis of phenotypic abnormalities in which the individual components of the phenotype are observed and described. The HPO is being increasingly adopted as a standard for phenotypic abnormalities by diverse groups such as international rare disease organizations, registries, clinical labs, biomedical resources, and clinical software tools and will thereby contribute toward nascent efforts at global data exchange for identifying disease etiologies (Köhler et al, 2017). [1]
+    """,
+    epilog="""
+    [1] Human Phenotype Ontology. Retrieved April 29, 2019, from https://hpo.jax.org/app/help/introduction
+    """
+)
+
+parser_hpo.add_argument(
+    "uri",
+    metavar="URI",
+    help="resource identifier for files"
+)
+
+parser_hpo.set_defaults(execute=HPOCommand.execute)
 
 parser_rxnorm = subparsers.add_parser(
     "rxnorm",
@@ -37,8 +57,13 @@ parser_rxnorm = subparsers.add_parser(
     [1] RxNorm. Retrieved April 22, 2019, from https://www.nlm.nih.gov/research/umls/rxnorm/
     """
 )
+
 parser_rxnorm.add_argument(
-    "uri", metavar="URI", help="resource identifier for files")
+    "uri",
+    metavar="URI",
+    help="resource identifier for files"
+)
+
 parser_rxnorm.set_defaults(execute=RxNormCommand.execute)
 
 
