@@ -1,0 +1,4 @@
+site_name: TermLink
+nav:
+    - Home: index.md
+theme: alabaster
