@@ -27,9 +27,9 @@ deploy:
     github_token: $GITHUB_TOKEN
     keep_history: true
     on:
-      branch: master
+      tags: true
 
   - provider: script
     script: ./scripts/docker.sh
     on:
-      branch: master
+      tags: true
