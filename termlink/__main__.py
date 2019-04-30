@@ -41,6 +41,9 @@ parser_rxnorm.add_argument(
     "uri", metavar="URI", help="resource identifier for files")
 parser_rxnorm.set_defaults(execute=RxNormCommand.execute)
 
-
 args = parser.parse_args()
-args.execute(args)
+
+if hasattr(args, 'execute'):
+    args.execute(args)
+else:
+    parser.print_help()
