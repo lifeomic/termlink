@@ -1,10 +1,8 @@
 ![GitHub](https://img.shields.io/github/license/lifeomic/termlink.svg?style=flat-square)
+![Travis (.org) branch](https://img.shields.io/travis/lifeomic/termlink/master.svg?style=flat-square)
 ![PyPI status](https://img.shields.io/pypi/status/termlink.svg?style=flat-square)
 ![GitHub release](https://img.shields.io/github/release/lifeomic/termlink.svg?style=flat-square)
 
-![Travis (.org) branch](https://img.shields.io/travis/lifeomic/termlink/master.svg?style=flat-square)
-
-![Docker Pulls](https://img.shields.io/docker/pulls/lifeomic/termlink.svg?style=flat-square)
 
 
 # termlink
