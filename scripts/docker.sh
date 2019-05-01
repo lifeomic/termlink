@@ -1,5 +1,4 @@
 #!/bin/bash
-make package
 npm_package_version="$(cat package.json | jq .version | sed 's/"//g')"
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 docker build -t lifeomic/termlink .

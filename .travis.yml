@@ -33,6 +33,11 @@ deploy:
       tags: true
 
   - provider: script
+    script: make package
+    on:
+      tags: true
+
+  - provider: script
     script: ./scripts/docker.sh
     on:
       tags: true
@@ -40,5 +45,14 @@ deploy:
   - provider: pypi
     user: $TWINE_USERNAME
     password: $TWINE_PASSWORD
+    on:
+      tags: true
+
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GITHUB_TOKEN
+    file:
+      - dist/termlink-*-py2-none-any.whl
+      - dist/termlink-*.tar.gz
     on:
       tags: true
