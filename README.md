@@ -1,7 +1,11 @@
-[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
-[![GitHub tag](https://img.shields.io/github/tag/lifeomic/termlink.svg)](https://github.com/lifeomic/termlink/tags/)
-[![PyPI status](https://img.shields.io/pypi/status/termlink.svg)](https://pypi.python.org/pypi/termlink/)
-[![Build Status](https://travis-ci.org/lifeomic/termlink.svg?branch=master)](https://travis-ci.org/lifeomic/termlink)
+![GitHub](https://img.shields.io/github/license/lifeomic/termlink.svg?style=flat-square)
+![PyPI status](https://img.shields.io/pypi/status/termlink.svg?style=flat-square)
+![GitHub release](https://img.shields.io/github/release/lifeomic/termlink.svg?style=flat-square)
+
+![Travis (.org) branch](https://img.shields.io/travis/lifeomic/termlink/master.svg?style=flat-square)
+
+![Docker Pulls](https://img.shields.io/docker/pulls/lifeomic/termlink.svg?style=flat-square)
+
 
 # termlink
 
