@@ -4,12 +4,14 @@ This module provides methods to extract and transform the HPO (Human Phenotype O
 
 The download files for HPO are provided at https://hpo.jax.org/app/download/ontology
 """
+import json
+
 from urllib.parse import urlparse
 
 from pronto import Ontology, Term
 
 from termlink.commands import SubCommand
-from termlink.models import Coding, Relationship
+from termlink.models import Coding, Relationship, RelationshipSchema
 from termlink.services import RelationshipService
 
 
@@ -68,7 +70,7 @@ def _to_coding(term):
     )
 
 
-def _to_json(source, equivalence, target):
+def _to_relationship(source, equivalence, target):
     """Converts a source and target `pronto.Term` into a JSON object.
 
     Args:
@@ -81,8 +83,7 @@ def _to_json(source, equivalence, target):
     """
     source = _to_coding(source)
     target = _to_coding(target)
-    relationship = Relationship(equivalence, source, target)
-    return relationship.to_json()
+    return Relationship(equivalence, source, target)
 
 
 class Command(SubCommand):
@@ -96,8 +97,10 @@ class Command(SubCommand):
         service = Service(uri, skip_alt_ids, skip_synonyms)
 
         relationships = service.get_relationships()
-        for relationship in relationships:
-            print(relationship)
+        schema = RelationshipSchema()
+        relationships = [schema.dump(relationship)
+                         for relationship in relationships]
+        print(json.dumps(relationships))
 
 
 class Service(RelationshipService):
@@ -129,12 +132,12 @@ class Service(RelationshipService):
         # child to parent relationships
         for term in ontology:
             for child in term.children:
-                yield _to_json(child, "subsumes", term)
+                yield _to_relationship(child, "subsumes", term)
 
         # parent to child relationships
         for term in ontology:
             for parent in term.parents:
-                yield _to_json(parent, "specializes", term)
+                yield _to_relationship(parent, "specializes", term)
 
         # alt_id relationships:
         if not self.skip_alt_ids:
@@ -147,7 +150,7 @@ class Service(RelationshipService):
                                 name=term.name,
                                 desc=term.desc
                             )
-                            yield _to_json(term, "equal", target)
+                            yield _to_relationship(term, "equal", target)
 
         # synonym relationships
         if not self.skip_synonyms:
@@ -159,7 +162,7 @@ class Service(RelationshipService):
                         desc=term.desc
                     )
                     equivalence = _to_equivalence_from_scope(synonym.scope)
-                    yield _to_json(term, equivalence, target)
+                    yield _to_relationship(term, equivalence, target)
 
         # todo - lookup concept based on system and code
         # xref relationships
