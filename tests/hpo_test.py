@@ -1,15 +1,14 @@
 """Verifies the 'hpo.py' module"""
 
-import json
 from urllib.parse import urlparse
 
-from nose.tools import ok_, raises
+from nose.tools import ok_, raises, eq_
 
 from parameterized import parameterized
 
 from pronto import Term
 
-from termlink.hpo import Service, _to_equivalence_from_scope, _to_system, _to_coding, _to_json
+from termlink.hpo import Service, _to_equivalence_from_scope, _to_system, _to_coding, _to_relationship
 from termlink.models import Coding, Relationship
 
 
@@ -75,14 +74,14 @@ def test_to_coding():
     ok_(exp == res)
 
 
-def test_to_json():
+def test_to_relationship():
     """Checks that a source, equivalence and target and properly converted"""
 
     source = Term(id='HP:0000107', name='Renal cyst')
     equivalence = 'subsumes'
     target = Term(id='HP:0000003', name='Multicystic kidney dysplasia')
 
-    res = _to_json(source, equivalence, target)
+    res = _to_relationship(source, equivalence, target)
 
     exp = Relationship(
         equivalence='subsumes',
@@ -96,6 +95,6 @@ def test_to_json():
             code='0000003',
             display='Multicystic kidney dysplasia'
         )
-    ).to_json()
+    )
 
-    ok_(json.loads(exp) == json.loads(res))
+    eq_(exp, res)

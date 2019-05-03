@@ -1,10 +1,8 @@
 """Verifies the 'models.py' module"""
 
-import json
-
 from nose.tools import eq_
 
-from termlink.models import Coding, Relationship
+from termlink.models import Coding, CodingSchema, Relationship, RelationshipSchema
 
 
 def test_convert_coding_to_json():
@@ -24,15 +22,16 @@ def test_convert_coding_to_json():
 
     exp = {
         'type': 'coding',
-        system: system,
-        version: version,
-        code: code,
-        display: display
+        'system': system,
+        'version': version,
+        'code': code,
+        'display': display
     }
 
-    res = coding.to_json()
+    schema = CodingSchema()
+    res = schema.dump(coding)
 
-    eq_(json.dumps(exp), res)
+    eq_(exp, res)
 
 
 def test_convert_empty_coding_to_json():
@@ -47,9 +46,11 @@ def test_convert_empty_coding_to_json():
         'code': None,
         'display': None
     }
-    res = coding.to_json()
 
-    eq_(json.dumps(exp), res)
+    schema = CodingSchema()
+    res = schema.dump(coding)
+
+    eq_(exp, res)
 
 
 def test_convert_partial_coding_to_json():
@@ -67,9 +68,10 @@ def test_convert_partial_coding_to_json():
         'display': None
     }
 
-    res = coding.to_json()
+    schema = CodingSchema()
+    res = schema.dump(coding)
 
-    eq_(json.dumps(exp), res)
+    eq_(exp, res)
 
 
 def test_convert_relationship_to_json():
@@ -115,6 +117,7 @@ def test_convert_relationship_to_json():
         }
     }
 
-    res = relationship.to_json()
+    schema = RelationshipSchema()
+    res = schema.dump(relationship)
 
-    eq_(json.dumps(exp), res)
+    eq_(exp, res)
