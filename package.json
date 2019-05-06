@@ -2,8 +2,8 @@
   "name": "termlink",
   "version": "0.6.0",
   "description": "Provide an ontology via Terminology Service's API link.",
-  "url": "https://github.com/lifeomic/termlink",
-  "repository": "git@bitbucket.org:lifeomic/termlink.git",
+  "url": "https://lifeomic.github.io/termlink/",
+  "repository": "git@github.com:lifeomic/termlink.git",
   "author": "Taylor Steinberg <taylor.steinberg@lifeomic.com>",
   "license": "MIT",
   "scripts": {
