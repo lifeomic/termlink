@@ -71,7 +71,8 @@ def test_to_json():
 
     src = Record(values, fields)
     res = _to_json(src)
-    ok_(res[0])
+    print(res)
+    ok_(False)
 
 
 def test_to_system():

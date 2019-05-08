@@ -21,7 +21,6 @@ _RXNCONSO_FIELDS = ["RXCUI", "LAT", "TS", "LUI", "STT", "SUI", "ISPREF", "RXAUI"
 _RXNREL_FIELDS = ["RXCUI1", "RXAUI1", "STYPE1", "REL", "RXCUI2", "RXAUI2",
                   "STYPE2", "RELA", "RUI", "SRUI", "SAB", "SL", "DIR", "RG", "SUPPRESS", "CVF", ]
 
-
 def _to_system(sab):
     """Converts an SAB to a system
 
@@ -111,7 +110,7 @@ class Service(RelationshipService):
             .fromcsv(path, delimiter='|') \
             .setheader(_RXNCONSO_FIELDS) \
             .select(lambda rec: rec['SAB'] == 'RXNORM') \
-            .cut('RXCUI', 'CODE', 'STR')
+            .cut('RXCUI', 'CODE', 'STR', 'SAB')
 
         source = rxnconso.prefixheader('source.')
         target = rxnconso.prefixheader('target.')
