@@ -24,9 +24,9 @@ def test_service_uri_requires_scheme_file():
 
 def test_to_relationship():
     """Checks that a record is properly converted to a Relationship"""
-    fields = ['source.CODE', 'source.STR', 'source.SAB',
-              'target.CODE', 'target.STR', 'target.SAB']
+    fields = ['REL', 'source.CODE', 'source.STR', 'source.SAB', 'target.CODE', 'target.STR', 'target.SAB']
     values = (
+        'RB',
         '313782',
         'Acetaminophen 325 MG Oral Tablet',
         'RXNORM',
@@ -58,9 +58,9 @@ def test_to_relationship():
 def test_to_json():
     """Checks that a record is properly converted to .json"""
 
-    fields = ['source.CODE', 'source.STR', 'source.SAB',
-              'target.CODE', 'target.STR', 'target.SAB']
+    fields = ['REL', 'source.CODE', 'source.STR', 'source.SAB', 'target.CODE', 'target.STR', 'target.SAB']
     values = (
+        'RB',
         '313782',
         'Acetaminophen 325 MG Oral Tablet',
         'RXNORM',
@@ -71,8 +71,7 @@ def test_to_json():
 
     src = Record(values, fields)
     res = _to_json(src)
-    print(res)
-    ok_(False)
+    ok_(res)
 
 
 def test_to_system():

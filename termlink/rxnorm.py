@@ -21,6 +21,26 @@ _RXNCONSO_FIELDS = ["RXCUI", "LAT", "TS", "LUI", "STT", "SUI", "ISPREF", "RXAUI"
 _RXNREL_FIELDS = ["RXCUI1", "RXAUI1", "STYPE1", "REL", "RXCUI2", "RXAUI2",
                   "STYPE2", "RELA", "RUI", "SRUI", "SAB", "SL", "DIR", "RG", "SUPPRESS", "CVF", ]
 
+_RELATIONSHIP_TO_EQUIVALENCE = {
+    'RB': 'subsumes',
+}
+
+
+def _to_equivalence(rel):
+    """Converts a relationship into an equivalence
+
+    Args:
+        rel: relationship of second concept or atom to first concept or atom
+
+    Returns:
+        an equivalence from https://www.hl7.org/fhir/valueset-concept-map-equivalence.html
+    """
+    try:
+        return _RELATIONSHIP_TO_EQUIVALENCE[rel]
+    except KeyError:
+        raise RuntimeError('rel \'%s\' is not supported' % rel)
+
+
 def _to_system(sab):
     """Converts an SAB to a system
 
@@ -44,6 +64,8 @@ def _to_relationship(rec):
     Returns:
         A `Relationship`
     """
+    equivalence = _to_equivalence(rec['REL'])
+
     source = Coding(
         system=_to_system(rec['source.SAB']),
         code=rec['source.CODE'],
@@ -56,7 +78,8 @@ def _to_relationship(rec):
         display=rec['target.STR']
     )
 
-    return Relationship('subsumes', source, target)
+    return Relationship(equivalence, source, target)
+
 
 def _to_json(rec):
     """Converts a record to a formatted `Relationship` in JSON form.
@@ -83,7 +106,8 @@ class Command(SubCommand):
             args: `argparse` parsed arguments
         """
         uri = urlparse(args.uri)
-        service = Service(uri)
+        sources = set(args.source)
+        service = Service(uri, sources)
         table = service.get_relationships()
         etl.io.totext(table, encoding='utf8', template='{relationship}\n')
 
@@ -91,7 +115,7 @@ class Command(SubCommand):
 class Service:
     """Converts the RxNorm database"""
 
-    def __init__(self, uri, sources=['RXNORM']):
+    def __init__(self, uri, sources=set(['RXNORM'])):
         """Bootstraps a service
 
         Args:
@@ -102,7 +126,7 @@ class Service:
             raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
 
         self.uri = uri
-        self.sources = set(sources)
+        self.sources = sources
 
     def get_relationships(self):
         "Parses a list of `Relationship` objects."
@@ -123,11 +147,11 @@ class Service:
             .select(lambda rec: rec['SAB'] in self.sources) \
             .select(lambda rec: rec['STYPE1'] == 'CUI') \
             .select(lambda rec: rec['STYPE2'] == 'CUI') \
-            .select(lambda rec: rec['REL'] == 'RB') \
-            .cut('RXCUI1', 'RXCUI2')
+            .select(lambda rec: rec['REL'] in _RELATIONSHIP_TO_EQUIVALENCE.keys()) \
+            .cut('REL', 'RXCUI1', 'RXCUI2')
 
         return rxnrel \
             .join(source, lkey='RXCUI1', rkey='source.RXCUI') \
             .join(target, lkey='RXCUI2', rkey='target.RXCUI') \
-            .rowmap(_to_json, ['source.CODE', 'source.STR', 'source.SAB', 'target.CODE', 'target.STR', 'target.SAB']) \
+            .rowmap(_to_json, ['REL', 'source.CODE', 'source.STR', 'source.SAB', 'target.CODE', 'target.STR', 'target.SAB']) \
             .setheader(['relationship'])

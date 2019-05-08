@@ -106,6 +106,13 @@ parser_rxnorm.add_argument(
     help="resource identifier for files"
 )
 
+parser_rxnorm.add_argument(
+    "-s",
+    "--source",
+    action='append',
+    default=['RXNORM']
+)
+
 parser_rxnorm.set_defaults(execute=RxNormCommand.execute)
 
 args = parser.parse_args()
