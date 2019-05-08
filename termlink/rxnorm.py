@@ -88,10 +88,10 @@ class Command(SubCommand):
         etl.io.totext(table, encoding='utf8', template='{relationship}\n')
 
 
-class Service(RelationshipService):
+class Service:
     """Converts the RxNorm database"""
 
-    def __init__(self, uri):
+    def __init__(self, uri, sources=['RXNORM']):
         """Bootstraps a service
 
         Args:
@@ -102,6 +102,7 @@ class Service(RelationshipService):
             raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
 
         self.uri = uri
+        self.sources = set(sources)
 
     def get_relationships(self):
         "Parses a list of `Relationship` objects."
@@ -109,7 +110,7 @@ class Service(RelationshipService):
         rxnconso = etl \
             .fromcsv(path, delimiter='|') \
             .setheader(_RXNCONSO_FIELDS) \
-            .select(lambda rec: rec['SAB'] == 'RXNORM') \
+            .select(lambda rec: rec['SAB'] in self.sources) \
             .cut('RXCUI', 'CODE', 'STR', 'SAB')
 
         source = rxnconso.prefixheader('source.')
@@ -119,7 +120,7 @@ class Service(RelationshipService):
         rxnrel = etl \
             .fromcsv(path, delimiter='|') \
             .setheader(_RXNREL_FIELDS) \
-            .select(lambda rec: rec['SAB'] == 'RXNORM') \
+            .select(lambda rec: rec['SAB'] in self.sources) \
             .select(lambda rec: rec['STYPE1'] == 'CUI') \
             .select(lambda rec: rec['STYPE2'] == 'CUI') \
             .select(lambda rec: rec['REL'] == 'RB') \
