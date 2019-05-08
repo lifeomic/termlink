@@ -6,13 +6,14 @@ defined by the RxNorm dataset.
 The download files for RxNorm are provided at https://www.nlm.nih.gov/research/umls/rxnorm/.
 """
 import os
+import json
 
 from urllib.parse import urlparse
 
 import petl as etl
 
 from termlink.commands import SubCommand
-from termlink.models import Coding, Relationship
+from termlink.models import Coding, Relationship, RelationshipSchema
 from termlink.services import RelationshipService
 
 _RXNCONSO_FIELDS = ["RXCUI", "LAT", "TS", "LUI", "STT", "SUI", "ISPREF", "RXAUI",
@@ -49,7 +50,8 @@ def _to_json(rec):
 
     relationship = Relationship('subsumes', source, target)
 
-    return [relationship.to_json()]
+    schema = RelationshipSchema()
+    return [json.dumps(schema.dump(relationship))]
 
 
 class Command(SubCommand):
