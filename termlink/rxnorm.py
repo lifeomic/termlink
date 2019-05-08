@@ -22,12 +22,45 @@ _RXNREL_FIELDS = ["RXCUI1", "RXAUI1", "STYPE1", "REL", "RXCUI2", "RXAUI2",
                   "STYPE2", "RELA", "RUI", "SRUI", "SAB", "SL", "DIR", "RG", "SUPPRESS", "CVF", ]
 
 
-def _to_json(rec):
-    """
-    Convert record in table to Relationship as a JSON object
+def _to_system(sab):
+    """Converts an SAB to a system
 
-    Record is expected to have the following fields: [ source.CODE, source.STR, 
-    target.CODE, target.STR]
+    Args:
+        sab: a UMLS source name abbreviation
+
+    Returns:
+        the identity of the terminology system
+    """
+    return "http://www.nlm.nih.gov/research/umls/%s" % sab.lower()
+
+
+def _to_relationship(rec):
+    """Convert record in table to `Relationship`
+
+    Record is expected to have the following fields: [source.CODE, source.STR, source.SAB, target.CODE, target.STR, target.SAB]
+
+    Args:
+        rec: A table record
+
+    Returns:
+        A `Relationship`
+    """
+    source = Coding(
+        system=_to_system(rec['source.SAB']),
+        code=rec['source.CODE'],
+        display=rec['source.STR']
+    )
+
+    target = Coding(
+        system=_to_system(rec['target.SAB']),
+        code=rec['target.CODE'],
+        display=rec['target.STR']
+    )
+
+    return Relationship('subsumes', source, target)
+
+def _to_json(rec):
+    """Converts a record to a formatted `Relationship` in JSON form.
 
     Args:
         rec: A table record
@@ -35,34 +68,17 @@ def _to_json(rec):
     Returns:
         A new record containing a single field, which is the JSON object
     """
-
-    source = Coding(
-        system="http://www.nlm.nih.gov/research/umls/rxnorm",
-        code=rec['source.CODE'],
-        display=rec['source.STR']
-    )
-
-    target = Coding(
-        system="http://www.nlm.nih.gov/research/umls/rxnorm",
-        code=rec['target.CODE'],
-        display=rec['target.STR']
-    )
-
-    relationship = Relationship('subsumes', source, target)
-
+    relationship = _to_relationship(rec)
     schema = RelationshipSchema()
     return [json.dumps(schema.dump(relationship))]
 
 
 class Command(SubCommand):
-    """
-    A command executor for RxNorm operations
-    """
+    "A command executor for RxNorm operations"
 
     @staticmethod
     def execute(args):
-        """
-        Prints a JSON array of `Relationship` objects to stdout
+        """Prints a JSON array of `Relationship` objects to stdout
 
         Args:
             args: `argparse` parsed arguments
@@ -77,8 +93,7 @@ class Service(RelationshipService):
     """Converts the RxNorm database"""
 
     def __init__(self, uri):
-        """
-        Bootstraps a service
+        """Bootstraps a service
 
         Args:
             uri: URI to root location of .rrf files
@@ -90,9 +105,7 @@ class Service(RelationshipService):
         self.uri = uri
 
     def get_relationships(self):
-        """
-        Parses a list of `Relationship` objects.
-        """
+        "Parses a list of `Relationship` objects."
         path = os.path.join(self.uri.path, 'RXNCONSO.RRF')
         rxnconso = etl \
             .fromcsv(path, delimiter='|') \
@@ -116,5 +129,5 @@ class Service(RelationshipService):
         return rxnrel \
             .join(source, lkey='RXCUI1', rkey='source.RXCUI') \
             .join(target, lkey='RXCUI2', rkey='target.RXCUI') \
-            .rowmap(_to_json, ['source.CODE', 'source.STR', 'target.CODE', 'target.STR']) \
+            .rowmap(_to_json, ['source.CODE', 'source.STR', 'source.SAB', 'target.CODE', 'target.STR', 'target.SAB']) \
             .setheader(['relationship'])
