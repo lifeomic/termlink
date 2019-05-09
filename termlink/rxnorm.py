@@ -25,6 +25,11 @@ _RELATIONSHIP_TO_EQUIVALENCE = {
     'RB': 'subsumes',
 }
 
+_SAB_TO_SYSTEM = {
+    'ATC': 'http://www.whocc.no/atc',
+    'CVX': 'http://hl7.org/fhir/sid/cvx',
+    'SNOMEDCT_US': 'http://snomed.info/sct',
+}
 
 def _to_equivalence(rel):
     """Converts a relationship into an equivalence
@@ -42,7 +47,7 @@ def _to_equivalence(rel):
 
 
 def _to_system(sab):
-    """Converts an SAB to a system
+    """Converts an SAB to a system.
 
     Args:
         sab: a UMLS source name abbreviation
@@ -50,7 +55,7 @@ def _to_system(sab):
     Returns:
         the identity of the terminology system
     """
-    return "http://www.nlm.nih.gov/research/umls/%s" % sab.lower()
+    return _SAB_TO_SYSTEM.get(sab, 'http://www.nlm.nih.gov/research/umls/%s' % sab.lower())
 
 
 def _to_relationship(rec):
