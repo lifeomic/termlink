@@ -156,17 +156,17 @@ parser_snomedct.add_argument(
 )
 
 parser_snomedct.add_argument(
-    "--include-version-mapping",
-    dest='include_version_mapping',
+    "--versioned",
+    dest='versioned',
     action='store_true',
     help="includes 'version' mapping"
 )
 
 parser_snomedct.add_argument(
-    "--active-only",
-    dest='active_only',
+    "--include-inactive",
+    dest='include_inactive',
     action='store_true',
-    help="includes only 'active' relationship"
+    help="includes 'inactive' relationship"
 )
 
 parser_snomedct.set_defaults(execute=SnomedCtCommand.execute)

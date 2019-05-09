@@ -25,7 +25,7 @@ def test_service_uri_requires_scheme_file():
 def test_to_json():
     """Checks that a record is properly converted to .json"""
 
-    fields = ['effectiveTime', 'sourceId', 'destinationId', 'source.term', 'target.term', 'include-version-mapping']
+    fields = ['effectiveTime', 'sourceId', 'destinationId', 'source.term', 'target.term', 'versioned']
     values = ('20160131', '425630003', '400195000', 'Acute irritant contact dermatitis (disorder)',
               'Contact hypersensitivity reaction (disorder)', False)
     record = Record(values, fields)

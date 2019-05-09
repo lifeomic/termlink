@@ -1,9 +1,9 @@
 """Handles Snomed-CT conversion.
 
 This module provides methods to extract, transform and load relationships
-defined by the snomed-ct dataset.
+defined by the SNOMED CT dataset.
 
-The download files for snomed-ct are provided at https://www.nlm.nih.gov/healthit/snomedct/.
+The download files for SNOMED CT are provided at https://www.nlm.nih.gov/healthit/snomedct/.
 """
 import petl as etl
 import json
@@ -41,18 +41,16 @@ def _to_json(rec):
     source = Coding(
         system="http://snomed.info/sct",
         code=rec['sourceId'],
-        display=rec['source.term']
+        display=rec['source.term'],
+        version=rec['effectiveTime'] if rec['versioned'] else None
     )
 
     target = Coding(
         system="http://snomed.info/sct",
         code=rec['destinationId'],
-        display=rec['target.term']
+        display=rec['target.term'],
+        version=rec['effectiveTime'] if rec['versioned'] else None
     )
-
-    if rec['include-version-mapping']:
-        source = replace(source, version=rec['effectiveTime'])
-        target = replace(target, version=rec['effectiveTime'])
 
     relationship = Relationship('subsumes', source, target)
 
@@ -74,35 +72,38 @@ class Command(SubCommand):
             args: `argparse` parsed arguments
         """
         uri = urlparse(args.uri)
-        service = Service(uri, args.include_version_mapping, args.active_only)
+        service = Service(uri, args.versioned, args.include_inactive)
         table = service.get_relationships()
-        etl.io.totext(table, encoding='utf8', template='{relationship}\n')
+        if table:
+            etl.io.totext(table, encoding='utf8', template='{relationship}\n')
 
 
 
 class Service(RelationshipService):
-    """Converts the Snomed-CT database"""
+    """Converts the SNOMED CT database"""
 
-    def __init__(self, uri, include_version_mapping=False, active_only=False):
+    def __init__(self, uri, versioned=False, include_inactive=False):
         """
         Bootstraps a service
 
         Args:
             uri: URI to root location of .rrf files
+            versioned: Flag to indicate whether to include version mapping
+            include_inactive: Flag to indicate whether to transform inactive relationship or not. Default is active only.
         """
 
         if uri.scheme != 'file':
             raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
 
         self.uri = uri
-        self.include_version_mapping = include_version_mapping
-        self.active_only = active_only
+        self.versioned = versioned
+        self.include_inactive = include_inactive
 
-    def get_file_name(self, files, type):
+    def get_file_name(self, files, file_type):
         for file in files:
-            if type in file:
+            if file_type in file:
                 return os.path.join(self.uri.path, file)
-        raise ValueError("Unable to find \"" + type + "\" file in the directory files (" + str(files) + ")!")
+        raise ValueError("Unable to find \"" + file_type + "\" file in the directory files (" + str(files) + ")!")
 
     def get_relationships(self):
         """
@@ -116,13 +117,17 @@ class Service(RelationshipService):
             .setheader(_STATED_RELATIONSHIP_FILE_FIELDS) \
             .select(lambda rec: rec['typeId'] == _IS_A_TYPE_ID)
 
-        # Filter out inactive if active_only is set
-        if self.active_only:
+        # Include inactive if requested
+        if not self.include_inactive:
             relationship = relationship \
                 .select(lambda rec: rec['active'] == '1')
+
         relationship = relationship \
             .groupselectlast(['sourceId', 'destinationId', 'typeId']) \
             .cut('effectiveTime', 'sourceId', 'destinationId')
+
+        if relationship.nrows() == 0:
+            return None
 
         path = self.get_file_name(files, "Description")
         description = etl \
@@ -130,14 +135,15 @@ class Service(RelationshipService):
             .setheader(_DESCRIPTION_FILE_FIELDS) \
             .select(lambda rec: rec['typeId'] == _FULLY_SPECIFIED_NAME_TYPE_ID) \
             .select(lambda rec: rec['caseSignificanceId'] == _FIRST_LETTER_CAPITAL_CASE_ID) \
+            .sort(['conceptId', 'effectiveTime'], reverse=True) \
             .cut('conceptId', 'term')
 
         relationship_with_description = relationship \
             .lookupjoin(description, lkey="sourceId", rkey="conceptId", rprefix="source.") \
             .lookupjoin(description, lkey="destinationId", rkey="conceptId", rprefix="target.") \
-            .addfield('include-version-mapping', self.include_version_mapping) \
+            .addfield('versioned', self.versioned) \
             .rowmap(_to_json, ['effectiveTime', 'sourceId', 'destinationId', 'source.term', 'target.term',
-                               'include-version-mapping']) \
+                               'versioned']) \
             .setheader(['relationship'])
 
         return relationship_with_description
