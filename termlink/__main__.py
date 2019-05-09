@@ -157,14 +157,16 @@ parser_snomedct.add_argument(
 
 parser_snomedct.add_argument(
     "--include-version-mapping",
-    metavar="",
-    help="flag to map version property"
+    dest='include_version_mapping',
+    action='store_true',
+    help="includes 'version' mapping"
 )
 
 parser_snomedct.add_argument(
     "--active-only",
-    metavar="",
-    help="flag to transform active concept only"
+    dest='active_only',
+    action='store_true',
+    help="includes only 'active' relationship"
 )
 
 parser_snomedct.set_defaults(execute=SnomedCtCommand.execute)

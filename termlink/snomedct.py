@@ -5,16 +5,16 @@ defined by the snomed-ct dataset.
 
 The download files for snomed-ct are provided at https://www.nlm.nih.gov/healthit/snomedct/.
 """
+import petl as etl
+import json
 import os
 
-from urllib.parse import urlparse
-
-import petl as etl
-
 from termlink.commands import SubCommand
-from termlink.models import Coding, Relationship
+from termlink.models import Coding, Relationship, RelationshipSchema
 from termlink.services import RelationshipService
 from os import listdir
+from dataclasses import replace
+from urllib.parse import urlparse
 
 _STATED_RELATIONSHIP_FILE_FIELDS = ["id", "effectiveTime", "active", "moduleId", "sourceId", "destinationId",
                                     "relationshipGroup", "typeId", "characteristicTypeId", "modifierId"]
@@ -25,7 +25,7 @@ _FULLY_SPECIFIED_NAME_TYPE_ID = "900000000000003001"
 _FIRST_LETTER_CAPITAL_CASE_ID = "900000000000020002"
 
 
-def _to_json(rec, include_version=False):
+def _to_json(rec):
     """
     Convert record in table to Relationship as a JSON object
 
@@ -40,23 +40,24 @@ def _to_json(rec, include_version=False):
 
     source = Coding(
         system="http://snomed.info/sct",
-        code=rec['source.CODE'],
-        display=rec['source.STR']
+        code=rec['sourceId'],
+        display=rec['source.term']
     )
-    if include_version:
-        source.version.Coding.version = rec['source.VERSION']
 
     target = Coding(
         system="http://snomed.info/sct",
-        code=rec['target.CODE'],
-        display=rec['target.STR']
+        code=rec['destinationId'],
+        display=rec['target.term']
     )
-    if include_version:
-        source.version.Coding.version = rec['target.VERSION']
+
+    if rec['include-version-mapping']:
+        source = replace(source, version=rec['effectiveTime'])
+        target = replace(target, version=rec['effectiveTime'])
 
     relationship = Relationship('subsumes', source, target)
 
-    return [relationship.to_json()]
+    schema = RelationshipSchema()
+    return [json.dumps(schema.dump(relationship))]
 
 
 class Command(SubCommand):
@@ -114,15 +115,14 @@ class Service(RelationshipService):
             .fromcsv(path, delimiter='\t') \
             .setheader(_STATED_RELATIONSHIP_FILE_FIELDS) \
             .select(lambda rec: rec['typeId'] == _IS_A_TYPE_ID)
+
+        # Filter out inactive if active_only is set
         if self.active_only:
             relationship = relationship \
                 .select(lambda rec: rec['active'] == '1')
         relationship = relationship \
             .groupselectlast(['sourceId', 'destinationId', 'typeId']) \
             .cut('effectiveTime', 'sourceId', 'destinationId')
-
-        source = relationship.prefixheader('source.')
-        target = relationship.prefixheader('target.')
 
         path = self.get_file_name(files, "Description")
         description = etl \
@@ -132,9 +132,12 @@ class Service(RelationshipService):
             .select(lambda rec: rec['caseSignificanceId'] == _FIRST_LETTER_CAPITAL_CASE_ID) \
             .cut('conceptId', 'term')
 
-        return description \
-            .join(source, lkey='conceptId', rkey='source.sourceId') \
-            .join(target, lkey='conceptId', rkey='target.destinationId') \
-            .rowmap(_to_json, ['source.VERSION', 'source.CODE', 'source.STR', 'target.VERSION', 'target.CODE',
-                               'target.STR']) \
+        relationship_with_description = relationship \
+            .lookupjoin(description, lkey="sourceId", rkey="conceptId", rprefix="source.") \
+            .lookupjoin(description, lkey="destinationId", rkey="conceptId", rprefix="target.") \
+            .addfield('include-version-mapping', self.include_version_mapping) \
+            .rowmap(_to_json, ['effectiveTime', 'sourceId', 'destinationId', 'source.term', 'target.term',
+                               'include-version-mapping']) \
             .setheader(['relationship'])
+
+        return relationship_with_description
