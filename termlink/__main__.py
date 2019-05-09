@@ -107,11 +107,14 @@ parser_rxnorm.add_argument(
     help="resource identifier for files"
 )
 
+parser_rxnorm.set_defaults(execute=RxNormCommand.execute)
+
 parser_gsea = subparsers.add_parser(
     "gsea",
     help="Converts the 'Gene Set Enrichment Analysis Ontology'",
     description="""
-    The Gene Set Enrichment Analysis Ontology (GSEA) project provides an ontology of genes grouped by a relational concept
+    The Gene Set Enrichment Analysis Ontology (GSEA) project provides an ontology of genes grouped by a 
+    relational concept. [1]
     """,
     epilog="""
     [1] Gene Set Enrichment Analysis Ontology. Retrieved May 8, 2019, from http://software.broadinstitute.org/gsea/msigdb/collections.jsp
@@ -125,8 +128,6 @@ parser_gsea.add_argument(
 )
 
 parser_gsea.set_defaults(execute=GSEACommand.execute)
-
-parser_rxnorm.set_defaults(execute=RxNormCommand.execute)
 
 args = parser.parse_args()
 
