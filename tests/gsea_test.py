@@ -1,6 +1,8 @@
 """Verifies the 'gsea.py' module"""
 
 from nose.tools import ok_, raises
+from nose.tools import eq_
+
 from termlink.gsea import validate_path, _to_json
 import json
 
@@ -35,7 +37,7 @@ def test_to_json():
     gsea_record = ['MYOD_01', 'http://www.broadinstitute.org/gsea/msigdb/cards/MYOD_01', 'KCNE1L', 'FAM126A', 'HMGN2', 'EIF2C1']
     actual = _to_json(gsea_record, 2)
     expected = json.dumps({"equivalence": "subsumes", "target": {"version": None, "code": "MYOD_01", "display": "MYOD_01", "system": "http://www.broadinstitute.org/gsea/msigdb", "type": "coding"}, "source": {"version": None, "code": "KCNE1L", "display": "KCNE1L", "system": "http://www.broadinstitute.org/gsea/msigdb", "type": "coding"}}, sort_keys=True)
-    ok_(actual == expected)
+    eq_(actual, expected)
     expected = json.dumps({"target": {"type": "coding", "display": "MYOD_01", "system": "http://www.broadinstitute.org/gsea/msigdb", "version": None, "code": "MYOD_01"}, "equivalence": "subsumes", "source": {"type": "coding", "display": "HMGN2", "system": "http://www.broadinstitute.org/gsea/msigdb", "version": None, "code": "HMGN2"}}, sort_keys=True)
     actual = _to_json(gsea_record, 4)
-    ok_(actual == expected)
+    eq_(actual, expected)
