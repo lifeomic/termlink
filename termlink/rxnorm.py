@@ -31,6 +31,7 @@ _SAB_TO_SYSTEM = {
     'SNOMEDCT_US': 'http://snomed.info/sct',
 }
 
+
 def _to_equivalence(rel):
     """Converts a relationship into an equivalence
 
@@ -111,8 +112,9 @@ class Command(SubCommand):
             args: `argparse` parsed arguments
         """
         uri = urlparse(args.uri)
-        sources = set(args.source)
-        service = Service(uri, sources)
+        vocabularies = set(args.vocabulary)
+        suppress_flags = set(args.suppress)
+        service = Service(uri, vocabularies, suppress_flags)
         table = service.get_relationships()
         etl.io.totext(table, encoding='utf8', template='{relationship}\n')
 
@@ -120,18 +122,21 @@ class Command(SubCommand):
 class Service:
     """Converts the RxNorm database"""
 
-    def __init__(self, uri, sources=set(['RXNORM'])):
+    def __init__(self, uri, vocabularies=set(['RXNORM']), suppress_flags=set(['N'])):
         """Bootstraps a service
 
         Args:
             uri: URI to root location of .rrf files
+            vocabularies: source vocabularies
+            suppress_flags: suppress flags
         """
 
         if uri.scheme != 'file':
             raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
 
         self.uri = uri
-        self.sources = sources
+        self.vocabularies = vocabularies
+        self.suppress_flags = suppress_flags
 
     def get_relationships(self):
         "Parses a list of `Relationship` objects."
@@ -139,8 +144,8 @@ class Service:
         rxnconso = etl \
             .fromcsv(path, delimiter='|') \
             .setheader(_RXNCONSO_FIELDS) \
-            .select(lambda rec: rec['SAB'] in self.sources) \
-            .select(lambda rec: rec['SUPPRESS'] is 'N') \
+            .select(lambda rec: rec['SAB'] in self.vocabularies) \
+            .select(lambda rec: rec['SUPPRESS'] in self.suppress_flags) \
             .cut('RXCUI', 'CODE', 'STR', 'SAB')
 
         source = rxnconso.prefixheader('source.')
@@ -150,7 +155,7 @@ class Service:
         rxnrel = etl \
             .fromcsv(path, delimiter='|') \
             .setheader(_RXNREL_FIELDS) \
-            .select(lambda rec: rec['SAB'] in self.sources) \
+            .select(lambda rec: rec['SAB'] in self.vocabularies) \
             .select(lambda rec: rec['STYPE1'] == 'CUI') \
             .select(lambda rec: rec['STYPE2'] == 'CUI') \
             .select(lambda rec: rec['REL'] in _RELATIONSHIP_TO_EQUIVALENCE.keys()) \

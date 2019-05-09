@@ -22,9 +22,11 @@ def test_service_uri_requires_scheme_file():
     uri = urlparse("foobar://")
     Service(uri=uri)
 
+
 def test_to_relationship():
     """Checks that a record is properly converted to a Relationship"""
-    fields = ['REL', 'source.CODE', 'source.STR', 'source.SAB', 'target.CODE', 'target.STR', 'target.SAB']
+    fields = ['REL', 'source.CODE', 'source.STR', 'source.SAB',
+              'target.CODE', 'target.STR', 'target.SAB']
     values = (
         'RB',
         '313782',
@@ -54,11 +56,11 @@ def test_to_relationship():
     eq_(exp, res)
 
 
-
 def test_to_json():
     """Checks that a record is properly converted to .json"""
 
-    fields = ['REL', 'source.CODE', 'source.STR', 'source.SAB', 'target.CODE', 'target.STR', 'target.SAB']
+    fields = ['REL', 'source.CODE', 'source.STR', 'source.SAB',
+              'target.CODE', 'target.STR', 'target.SAB']
     values = (
         'RB',
         '313782',
