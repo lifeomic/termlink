@@ -9,6 +9,7 @@ from termlink.configuration import Config
 from termlink.rxnorm import Command as RxNormCommand
 from termlink.hpo import Command as HPOCommand
 from termlink.common import Command as CommonCommand
+from termlink.gsea import Command as GSEACommand
 from termlink.snomedct import Command as SnomedCtCommand
 
 configuration = Config()
@@ -109,6 +110,26 @@ parser_rxnorm.add_argument(
 
 parser_rxnorm.set_defaults(execute=RxNormCommand.execute)
 
+parser_gsea = subparsers.add_parser(
+    "gsea",
+    help="Converts the 'Gene Set Enrichment Analysis Ontology'",
+    description="""
+    The Gene Set Enrichment Analysis Ontology (GSEA) project provides an ontology of genes grouped by a 
+    relational concept. [1]
+    """,
+    epilog="""
+    [1] Gene Set Enrichment Analysis Ontology. Retrieved May 8, 2019, from http://software.broadinstitute.org/gsea/msigdb/collections.jsp
+    """
+)
+
+parser_gsea.add_argument(
+    "uri",
+    metavar="URI",
+    help="resource identifier for files"
+)
+
+parser_gsea.set_defaults(execute=GSEACommand.execute)
+
 parser_snomedct = subparsers.add_parser(
     "snomed-ct",
     help="Converts the 'Snomed-CT' code system",
@@ -154,3 +175,4 @@ if hasattr(args, 'execute'):
     args.execute(args)
 else:
     parser.print_help()
+
