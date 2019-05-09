@@ -140,6 +140,7 @@ class Service:
             .fromcsv(path, delimiter='|') \
             .setheader(_RXNCONSO_FIELDS) \
             .select(lambda rec: rec['SAB'] in self.sources) \
+            .select(lambda rec: rec['SUPPRESS'] is 'N') \
             .cut('RXCUI', 'CODE', 'STR', 'SAB')
 
         source = rxnconso.prefixheader('source.')
