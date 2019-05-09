@@ -81,7 +81,7 @@ class Command(SubCommand):
 
 
 class Service(RelationshipService):
-    """Converts the RxNorm database"""
+    """Converts the Snomed-CT database"""
 
     def __init__(self, uri, include_version_mapping=False, active_only=False):
         """
