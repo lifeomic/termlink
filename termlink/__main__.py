@@ -96,6 +96,14 @@ parser_rxnorm = subparsers.add_parser(
     Gold Standard Drug Database, and Multum. By providing links between these 
     vocabularies, RxNorm can mediate messages between systems not using the 
     same software and vocabulary. [1] 
+
+    Additional source vocabularies, aside from RxNorm, must be specified using 
+    the --vocabulary option. The full list of available source vocabularies is 
+    available at https://www.nlm.nih.gov/research/umls/rxnorm/docs/2019/rxnorm_doco_full_2019-1.html#s3_0.
+
+    By default concepts that are not suppressed, specified by the 'N' flag, are
+    included in the output. Additional flags can be included using the --suppress
+    option. More information on suppression can is documented at https://www.nlm.nih.gov/research/umls/rxnorm/docs/2019/rxnorm_doco_full_2019-1.html#s12_0.
     """,
     epilog="""
     [1] RxNorm. Retrieved April 22, 2019, from https://www.nlm.nih.gov/research/umls/rxnorm/
@@ -106,6 +114,22 @@ parser_rxnorm.add_argument(
     "uri",
     metavar="URI",
     help="resource identifier for files"
+)
+
+parser_rxnorm.add_argument(
+    "-v",
+    "--vocabulary",
+    action='append',
+    default=['RXNORM'],
+    help="use an additional source vocabulary (default: 'RXNORM')"
+)
+
+parser_rxnorm.add_argument(
+    "-s",
+    "--suppress",
+    action='append',
+    default=['N'],
+    help="unset the provided suppress flag (default: 'N')"
 )
 
 parser_rxnorm.set_defaults(execute=RxNormCommand.execute)

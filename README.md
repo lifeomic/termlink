@@ -92,24 +92,23 @@ yarn test
 
 ## Deployment
 
-The project is deployed in two locations.
+TermLink is published on:
 
-1. [PyPI](https://pypi.org/project/termlink/): Python package. 
-2. [Docker Hub](https://hub.docker.com/r/lifeomic/termlink): Packaged runtime environment.
+- [PyPI](https://pypi.org/project/termlink/): Python package.
+- [Docker Hub](https://hub.docker.com/r/lifeomic/termlink): Packaged runtime environment.
+- [GitHub](https://github.com/lifeomic/termlink/releases): Python package and source files.
 
-Publish a new version using the command following command:
+Documentation is published on [GitHub Pages](https://lifeomic.github.io/termlink/).
+
+To publish a new version run the following command:
 
 ```sh
-yarn deploy
+yarn version
 ```
 
-The deployment will prompt you multiple inputs.
+You will be promoted to enter a new version. Please use [SemVer](https://semver.org/) versioning for incrementing versions. To learn more about why SemVer is used, see the section on [_Versioning_](##Versioning) below.
 
-First, you will be promoted to enter a new version, triggered by the `yarn version` command. Please use [SemVer](https://semver.org/) versioning for incrementing versions. To learn more about why SemVer is used, see the section on [_Versioning_](##Versioning) below.
-
-Second, you will be promoted for PyPI credentials. To gain write access to the PyPI package, contact one of the maintainers listed on the project page [here](https://pypi.org/project/termlink/).
-
-Third, `docker push` will run which requires that you have previously logged in using `docker login`. To gain access to the Docker Hub project, contact one of the owners listed on the project page [here](https://hub.docker.com/r/lifeomic/termlink).
+This will trigger the deployment pipeline on `Travis CI`.
 
 ## Built With
 
