@@ -17,5 +17,7 @@ stderr.log
 node_modules/
 
 .vscode/
+
 .idea/
+*.iml
 .DS_Store

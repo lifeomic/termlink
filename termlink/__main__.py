@@ -10,6 +10,7 @@ from termlink.rxnorm import Command as RxNormCommand
 from termlink.hpo import Command as HPOCommand
 from termlink.common import Command as CommonCommand
 from termlink.gsea import Command as GSEACommand
+from termlink.snomedct import Command as SnomedCtCommand
 
 configuration = Config()
 logger = configuration.logger
@@ -152,6 +153,47 @@ parser_gsea.add_argument(
 )
 
 parser_gsea.set_defaults(execute=GSEACommand.execute)
+
+parser_snomedct = subparsers.add_parser(
+    "snomed-ct",
+    help="Converts the 'Snomed-CT' code system",
+    description="""
+    SNOMED CTis a clinical terminology with global scope covering a wide range of clinical specialties, disciplines and 
+    requirements. As a result of its broad scope, one of the benefits of SNOMED CT is a reduction of specialty boundary 
+    effects that arise from use of different terminologies or coding systems by different clinicians or departments. 
+    This allows wider sharing and reuse of structured clinical information. Another benefit of SNOMED CT is that the 
+    same data can be processed and presented in ways that serve different purposes. For example, clinical records 
+    represented using SNOMED CTcan be processed and presented in different ways to support direct patient care, 
+    clinical audit, research, epidemiology, management and service planning. Additionally, the global scope of SNOMED CT
+     reduces geographical boundary effects arising from the use of different terminologies or coding systems in 
+     different organizations and countries. [1]
+    """,
+    epilog="""
+    [1] Snomed-CT. Retrieved May 9, 2019 from https://confluence.ihtsdotools.org/display/DOCSTART/3.+Using+SNOMED+CT+in+Clinical+Information
+    """
+)
+
+parser_snomedct.add_argument(
+    "uri",
+    metavar="URI",
+    help="resource identifier for files"
+)
+
+parser_snomedct.add_argument(
+    "--versioned",
+    dest='versioned',
+    action='store_true',
+    help="includes 'version' mapping"
+)
+
+parser_snomedct.add_argument(
+    "--include-inactive",
+    dest='include_inactive',
+    action='store_true',
+    help="includes 'inactive' relationship"
+)
+
+parser_snomedct.set_defaults(execute=SnomedCtCommand.execute)
 
 args = parser.parse_args()
 
