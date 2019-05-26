@@ -1,6 +1,6 @@
 """Handles conversions of common ontology formats
 
-This module provides support for converting common ontology formats. The 
+This module provides support for converting common ontology formats. The
 following file types are supported:
 
 - .obo: https://owlcollab.github.io/oboformat/doc/GO.format.obo-1_4.html
@@ -53,6 +53,7 @@ def _to_relationship(source, equivalence, target, system):
     target = _to_coding(target, system)
     return Relationship(equivalence, source, target)
 
+
 def _get_relationships(uri, system):
     """Parses a list of `Relationship` objects
 
@@ -71,6 +72,7 @@ def _get_relationships(uri, system):
         for parent in term.parents:
             yield _to_relationship(parent, "specializes", term, system)
 
+
 def execute(args):
     """
     Converts an ontology in a common format.
@@ -81,10 +83,12 @@ def execute(args):
     uri = urlparse(args.uri)
     if uri.scheme != 'file':
         raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
-    
-    relationships = _get_relationships(uri, args.system)
 
     schema = RelationshipSchema()
-    relationships = [schema.dump(relationship) for relationship in relationships]
-    
-    print(json.dumps(relationships))
+    relationships = _get_relationships(uri, args.system)
+    serialized = [json.dumps(schema.dump(r)) for r in relationships]
+
+    for o in serialized:
+        print(o)
+
+    return serialized

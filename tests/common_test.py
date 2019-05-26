@@ -1,47 +1,51 @@
 """Verifies the 'common.py' module"""
 
-from nose.tools import eq_, ok_, raises
-
 import os
 
 from argparse import Namespace
-from pronto import Term
 from tempfile import mkstemp
+
+from nose.tools import eq_, ok_, raises
+
+from pronto import Term
 
 from termlink.common import _to_coding, _to_relationship, execute
 from termlink.models import Coding, Relationship
+
 
 @raises(ValueError)
 def test_uri_scheme():
     """An unsupported URI scheme throws a ValueError"""
     ok_(execute(Namespace(uri='foo://bar')))
 
+
 def test_obo():
     """Tests the conversion of a .obo file"""
     fd, path = mkstemp(suffix='.obo')
-    
+
     with open(path, 'w') as f:
-        f.write(
-            """
-            format-version: 1.2
-            ontology: https://lifeomic.github.io/termlink//ontologies/2019/5/termlink
-
-            [Term]
-            id: 55f41bdb_1005_496c_aeae_ab127e78c525
-            name: Root
-
-            [Term]
-            id: 61e2ec3e_6102_44dc_9f3c_3445e45dbf9e
-            name: Leaf
-            is_a: 55f41bdb_1005_496c_aeae_ab127e78c525 ! Root
-            """
-        )
+        f.writelines([
+            "format-version: 1.2\n",
+            "ontology: https://lifeomic.github.io/termlink//ontologies/2019/5/termlink\n",
+            "\n",
+            "[Term]\n",
+            "id: 55f41bdb_1005_496c_aeae_ab127e78c525\n",
+            "name: Root\n",
+            "\n",
+            "[Term]\n",
+            "id: 61e2ec3e_6102_44dc_9f3c_3445e45dbf9e\n",
+            "name: Leaf\n",
+            "is_a: 55f41bdb_1005_496c_aeae_ab127e78c525 ! Root\n",
+        ])
 
     uri = f"file://{path}"
     system = 'https://lifeomic.github.io/termlink/'
-    execute(Namespace(uri=uri, system=system))
+    output = execute(Namespace(uri=uri, system=system))
+
+    eq_(2, len(output))
 
     os.close(fd)
+
 
 def test_to_coding():
     """Checks that a term is properly converted"""
@@ -59,6 +63,7 @@ def test_to_coding():
 
     eq_(exp, res)
 
+
 def test_to_coding_without_colon():
     """Checks that a term without a ':' is properly converted"""
 
@@ -74,6 +79,7 @@ def test_to_coding_without_colon():
     )
 
     eq_(exp, res)
+
 
 def test_to_json():
     """Checks that a source, equivalence and target and properly converted"""
