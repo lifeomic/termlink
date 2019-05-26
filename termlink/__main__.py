@@ -4,11 +4,12 @@ This module is the command line interface for running "termlink."
 """
 import argparse
 
+import termlink.common as common
+
 from termlink.configuration import Config
 
 from termlink.rxnorm import Command as RxNormCommand
 from termlink.hpo import Command as HPOCommand
-from termlink.common import Command as CommonCommand
 from termlink.gsea import Command as GSEACommand
 from termlink.snomedct import Command as SnomedCtCommand
 
@@ -48,7 +49,7 @@ parser_common.add_argument(
     required=True
 )
 
-parser_common.set_defaults(execute=CommonCommand.execute)
+parser_common.set_defaults(execute=common.execute)
 
 parser_hpo = subparsers.add_parser(
     "hpo",
