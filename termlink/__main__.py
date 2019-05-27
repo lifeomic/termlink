@@ -3,6 +3,7 @@
 This module is the command line interface for running "termlink."
 """
 import argparse
+import textwrap
 
 import termlink.common as common
 
@@ -29,11 +30,15 @@ subparsers = parser.add_subparsers(
 
 parser_common = subparsers.add_parser(
     "common",
-    help="Converts a common format ontology",
-    description="""
-    Converts an ontology represented in a common format. The following file 
-    types are supported: .obo and .owl. 
-    """
+    help="Convert a common format ontology",
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    description=textwrap.dedent("""
+    Convert an ontology represented in a common format.
+
+    Supported format types:
+      - OBO (obo)
+      - RDF/XML (owl)
+    """)
 )
 
 parser_common.add_argument(
@@ -53,7 +58,7 @@ parser_common.set_defaults(execute=common.execute)
 
 parser_hpo = subparsers.add_parser(
     "hpo",
-    help="Converts the 'Human Phenotype Ontology'",
+    help="Convert the 'Human Phenotype Ontology'",
     description="""
     The Human Phenotype Ontology (HPO) project provides an ontology of medically relevant phenotypes, disease-phenotype annotations, and the algorithms that operate on these. The HPO can be used to support differential diagnostics, translational research, and a number of applications in computational biology by providing the means to compute over the clinical phenotype. The HPO is being used for computational deep phenotyping and precision medicine as well as integration of clinical data into translational research. Deep phenotyping can be defined as the precise and comprehensive analysis of phenotypic abnormalities in which the individual components of the phenotype are observed and described. The HPO is being increasingly adopted as a standard for phenotypic abnormalities by diverse groups such as international rare disease organizations, registries, clinical labs, biomedical resources, and clinical software tools and will thereby contribute toward nascent efforts at global data exchange for identifying disease etiologies (Köhler et al, 2017). [1]
     """,
@@ -89,7 +94,7 @@ parser_hpo.set_defaults(skip_synonyms=False)
 
 parser_rxnorm = subparsers.add_parser(
     "rxnorm",
-    help="Converts the 'RxNorm' code system",
+    help="Convert the 'RxNorm' code system",
     description="""
     RxNorm provides normalized names for clinical drugs and links its names to
     many of the drug vocabularies commonly used in pharmacy management and drug
@@ -137,7 +142,7 @@ parser_rxnorm.set_defaults(execute=RxNormCommand.execute)
 
 parser_gsea = subparsers.add_parser(
     "gsea",
-    help="Converts the 'Gene Set Enrichment Analysis Ontology'",
+    help="Convert the 'Gene Set Enrichment Analysis Ontology'",
     description="""
     The Gene Set Enrichment Analysis Ontology (GSEA) project provides an ontology of genes grouped by a 
     relational concept. [1]
@@ -157,17 +162,11 @@ parser_gsea.set_defaults(execute=GSEACommand.execute)
 
 parser_snomedct = subparsers.add_parser(
     "snomed-ct",
-    help="Converts the 'Snomed-CT' code system",
+    help="Convert the 'SNOMED-CT' code system",
     description="""
-    SNOMED CTis a clinical terminology with global scope covering a wide range of clinical specialties, disciplines and 
-    requirements. As a result of its broad scope, one of the benefits of SNOMED CT is a reduction of specialty boundary 
-    effects that arise from use of different terminologies or coding systems by different clinicians or departments. 
-    This allows wider sharing and reuse of structured clinical information. Another benefit of SNOMED CT is that the 
-    same data can be processed and presented in ways that serve different purposes. For example, clinical records 
-    represented using SNOMED CTcan be processed and presented in different ways to support direct patient care, 
-    clinical audit, research, epidemiology, management and service planning. Additionally, the global scope of SNOMED CT
-     reduces geographical boundary effects arising from the use of different terminologies or coding systems in 
-     different organizations and countries. [1]
+    SNOMED CT is a clinical terminology with global scope covering a wide range of clinical specialties, disciplines and requirements. As a result of its broad scope, one of the benefits of SNOMED CT is a reduction of specialty boundary effects that arise from use of different terminologies or coding systems by different clinicians or departments. 
+    This allows wider sharing and reuse of structured clinical information. Another benefit of SNOMED CT is that the same data can be processed and presented in ways that serve different purposes. For example, clinical records 
+    represented using SNOMED CT can be processed and presented in different ways to support direct patient care, clinical audit, research, epidemiology, management and service planning. Additionally, the global scope of SNOMED CT reduces geographical boundary effects arising from the use of different terminologies or coding systems in different organizations and countries. [1]
     """,
     epilog="""
     [1] Snomed-CT. Retrieved May 9, 2019 from https://confluence.ihtsdotools.org/display/DOCSTART/3.+Using+SNOMED+CT+in+Clinical+Information

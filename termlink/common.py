@@ -58,9 +58,10 @@ def _get_relationships(uri, system):
     """Parses a list of `Relationship` objects
 
     Returns:
-        yields `Relationship`s in JSON form
+        yields relationships
     """
     ontology = Ontology(uri.path)
+    print(ontology)
 
     # child to parent relationships
     for term in ontology:

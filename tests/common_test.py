@@ -1,9 +1,9 @@
 """Verifies the 'common.py' module"""
 
 import os
+import pkg_resources
 
 from argparse import Namespace
-from tempfile import mkstemp
 
 from nose.tools import eq_, ok_, raises
 
@@ -19,33 +19,21 @@ def test_uri_scheme():
     ok_(execute(Namespace(uri='foo://bar')))
 
 
-def test_obo():
-    """Tests the conversion of a .obo file"""
-    fd, path = mkstemp(suffix='.obo')
-
-    with open(path, 'w') as f:
-        f.writelines([
-            "format-version: 1.2\n",
-            "ontology: https://lifeomic.github.io/termlink//ontologies/2019/5/termlink\n",
-            "\n",
-            "[Term]\n",
-            "id: 55f41bdb_1005_496c_aeae_ab127e78c525\n",
-            "name: Root\n",
-            "\n",
-            "[Term]\n",
-            "id: 61e2ec3e_6102_44dc_9f3c_3445e45dbf9e\n",
-            "name: Leaf\n",
-            "is_a: 55f41bdb_1005_496c_aeae_ab127e78c525 ! Root\n",
-        ])
-
+def test_obo_format():
+    """Tests the conversion of an .obo file"""
+    path = pkg_resources.resource_filename(__name__, "resources/ontology.obo")
     uri = f"file://{path}"
     system = 'https://lifeomic.github.io/termlink/'
     output = execute(Namespace(uri=uri, system=system))
+    ok_(len(output) > 0)
 
-    eq_(2, len(output))
-
-    os.close(fd)
-
+def test_owl_format():
+    """Tests the conversion of an .owl file"""
+    path = pkg_resources.resource_filename(__name__, "resources/ontology.owl")
+    uri = f"file://{path}"
+    system = 'https://lifeomic.github.io/termlink/'
+    output = execute(Namespace(uri=uri, system=system))
+    ok_(len(output) > 0)
 
 def test_to_coding():
     """Checks that a term is properly converted"""
