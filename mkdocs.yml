@@ -3,5 +3,6 @@ nav:
     - Home: index.md
     - Getting Started: getting-started.md
     - Commands: 
-      - Common: commands/common.md
+      - common: commands/common.md
+      - gsea:   commands/gsea.md
 theme: alabaster
