@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Alters the output format for the `common` sub-command to JSON Lines
 
+## 0.8.1
+
+### Fixed
+
+- Fixes the PyPi release package
+
 ## 0.8.0
 
 ### Added

@@ -1,1 +1,3 @@
 include config.ini
+include package.json
+include requirements.txt
