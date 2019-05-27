@@ -1,9 +1,8 @@
 """Verifies the 'common.py' module"""
 
-import os
-import pkg_resources
-
 from argparse import Namespace
+
+import pkg_resources
 
 from nose.tools import eq_, ok_, raises
 
@@ -27,6 +26,7 @@ def test_obo_format():
     output = execute(Namespace(uri=uri, system=system))
     ok_(len(output) > 0)
 
+
 def test_owl_format():
     """Tests the conversion of an .owl file"""
     path = pkg_resources.resource_filename(__name__, "resources/ontology.owl")
@@ -34,6 +34,7 @@ def test_owl_format():
     system = 'https://lifeomic.github.io/termlink/'
     output = execute(Namespace(uri=uri, system=system))
     ok_(len(output) > 0)
+
 
 def test_to_coding():
     """Checks that a term is properly converted"""

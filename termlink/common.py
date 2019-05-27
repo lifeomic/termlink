@@ -61,7 +61,6 @@ def _get_relationships(uri, system):
         yields relationships
     """
     ontology = Ontology(uri.path)
-    print(ontology)
 
     # child to parent relationships
     for term in ontology:
