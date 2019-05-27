@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Alters the output format for the `common` sub-command to JSON Lines
+- Improves the runtime performance of the `gsea` sub-command
+- Reduces the memory footprint of the `gsea` sub-command
 
 ## 0.8.1
 

@@ -5,13 +5,13 @@ This module is the command line interface for running "termlink."
 import argparse
 import textwrap
 
-import termlink.common as common
+from termlink import common
+from termlink import gsea
 
 from termlink.configuration import Config
 
 from termlink.rxnorm import Command as RxNormCommand
 from termlink.hpo import Command as HPOCommand
-from termlink.gsea import Command as GSEACommand
 from termlink.snomedct import Command as SnomedCtCommand
 
 configuration = Config()
@@ -158,7 +158,7 @@ parser_gsea.add_argument(
     help="resource identifier for files"
 )
 
-parser_gsea.set_defaults(execute=GSEACommand.execute)
+parser_gsea.set_defaults(execute=gsea.execute)
 
 parser_snomedct = subparsers.add_parser(
     "snomed-ct",

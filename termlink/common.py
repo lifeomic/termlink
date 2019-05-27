@@ -57,6 +57,10 @@ def _to_relationship(source, equivalence, target, system):
 def _get_relationships(uri, system):
     """Parses a list of `Relationship` objects
 
+    Args:
+        uri:    a URI for the ontology file on the local filesystem
+        system: the target system
+
     Returns:
         yields relationships
     """

@@ -15,7 +15,7 @@ from termlink.models import Coding, Relationship
 @raises(ValueError)
 def test_uri_scheme():
     """An unsupported URI scheme throws a ValueError"""
-    ok_(execute(Namespace(uri='foo://bar')))
+    execute(Namespace(uri='foo://bar'))
 
 
 def test_obo_format():
