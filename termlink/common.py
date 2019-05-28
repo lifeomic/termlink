@@ -1,6 +1,6 @@
 """Handles conversions of common ontology formats
 
-This module provides support for converting common ontology formats. The 
+This module provides support for converting common ontology formats. The
 following file types are supported:
 
 - .obo: https://owlcollab.github.io/oboformat/doc/GO.format.obo-1_4.html
@@ -14,7 +14,6 @@ from urllib.parse import urlparse
 
 from pronto import Ontology
 
-from termlink.commands import SubCommand
 from termlink.models import Coding, Relationship, RelationshipSchema
 
 
@@ -55,50 +54,45 @@ def _to_relationship(source, equivalence, target, system):
     return Relationship(equivalence, source, target)
 
 
-class Command(SubCommand):
-    "A command executor for generic ontology files."
-    @staticmethod
-    def execute(args):
-        uri = urlparse(args.uri)
-        system = args.system
-        service = Service(uri, system)
-        relationships = service.get_relationships()
-        schema = RelationshipSchema()
-        relationships = [schema.dump(relationship)
-                         for relationship in relationships]
-        print(json.dumps(relationships))
+def _get_relationships(uri, system):
+    """Parses a list of `Relationship` objects
+
+    Args:
+        uri:    a URI for the ontology file on the local filesystem
+        system: the target system
+
+    Returns:
+        yields relationships
+    """
+    ontology = Ontology(uri.path)
+
+    # child to parent relationships
+    for term in ontology:
+        for child in term.children:
+            yield _to_relationship(child, "subsumes", term, system)
+
+    # parent to child relationships
+    for term in ontology:
+        for parent in term.parents:
+            yield _to_relationship(parent, "specializes", term, system)
 
 
-class Service:
-    "Converts the Human Phenotype Ontology"
+def execute(args):
+    """
+    Converts an ontology in a common format.
 
-    def __init__(self, uri, system):
-        """Bootstraps a service
+    Args:
+        args:   command line arguments from argparse
+    """
+    uri = urlparse(args.uri)
+    if uri.scheme != 'file':
+        raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
 
-        Args:
-            uri: URI to the file location
-            system: The code system identifer
-        """
-        if uri.scheme != 'file':
-            raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
+    schema = RelationshipSchema()
+    relationships = _get_relationships(uri, args.system)
+    serialized = [json.dumps(schema.dump(r)) for r in relationships]
 
-        self.uri = uri
-        self.system = system
+    for o in serialized:
+        print(o)
 
-    def get_relationships(self):
-        """Parses a list of `Relationship` objects
-
-        Returns:
-            yields `Relationship`s in JSON form
-        """
-        ontology = Ontology(self.uri.path)
-
-        # child to parent relationships
-        for term in ontology:
-            for child in term.children:
-                yield _to_relationship(child, "subsumes", term, self.system)
-
-        # parent to child relationships
-        for term in ontology:
-            for parent in term.parents:
-                yield _to_relationship(parent, "specializes", term, self.system)
+    return serialized

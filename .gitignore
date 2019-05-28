@@ -8,9 +8,11 @@ dist/
 site/
 venv/
 
+.coverage
 .noseids
-pylint.out
 nosetests.xml
+pylint.out
+tests/cover
 
 stderr.log
 

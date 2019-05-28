@@ -90,6 +90,13 @@ Run unit tests with `yarn`:
 yarn test
 ```
 
+Test coverage is enforced using the `coverage.py` module. Inspect the test 
+coverage with:
+
+```sh
+yarn inspect
+```
+
 ## Deployment
 
 TermLink is published on:

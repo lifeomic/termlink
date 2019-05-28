@@ -1,4 +1,8 @@
 site_name: TermLink
 nav:
     - Home: index.md
+    - Getting Started: getting-started.md
+    - Commands: 
+      - common: commands/common.md
+      - gsea:   commands/gsea.md
 theme: alabaster
