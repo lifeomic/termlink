@@ -1,6 +1,6 @@
 {
   "name": "termlink",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Provide an ontology via Terminology Service's API link.",
   "url": "https://lifeomic.github.io/termlink/",
   "repository": "git@github.com:lifeomic/termlink.git",
