@@ -5,16 +5,16 @@
   
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-    <title>TermLink</title>
+    <title>common &mdash; TermLink</title>
 
-    <link rel="shortcut icon" href="//img/favicon.ico">
-    <link rel="stylesheet" href="//css/alabaster.css" type="text/css">
-    <link rel="stylesheet" href="//css/alabaster-overrides.css" type="text/css">
-
-    
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <link rel="stylesheet" href="../../css/alabaster.css" type="text/css">
+    <link rel="stylesheet" href="../../css/alabaster-overrides.css" type="text/css">
 
     
-      <script src="/search/main.js"></script>
+
+    
+      <script src="../../search/main.js"></script>
     
 
     
@@ -31,13 +31,22 @@
       <div class="bodywrapper">
         <div class="body" role="main">
           
-  <h1>Page not found: 404 error</h1>
-
-  <p>
-    Sorry, there is nothing here. Try searching, or <a href="/">go home</a>.
-  </p>
-
-
+            <h1 id="common">Common</h1>
+<p>The <code>common</code> command is used to convert ontologies, not otherwise supported,
+in a generic way.</p>
+<p>The command supports the following file formats:</p>
+<ul>
+<li>OBO (.obo)</li>
+<li>RDF/XML (.owl)</li>
+</ul>
+<p>It is expected that the system to be recorded in the Precision Health Cloud to
+be different than the provided ontology IRI. Therefore a system value is also
+required.</p>
+<h2 id="getting-started">Getting Started</h2>
+<pre><code class="sh">python -m termlink common file://FILE.{obo,owl} -s SYSTEM
+</code></pre>
+            
+          
         </div>
       </div>
     </div>
@@ -46,7 +55,7 @@
         
           
             
-  <h1 class="logo"><a href="/.">TermLink</a></h1>
+  <h1 class="logo"><a href="../..">TermLink</a></h1>
 
 
 
@@ -60,15 +69,38 @@
 <nav>
   
   
+    <ul>
+    
+      <li><a href="#getting-started">Getting Started</a></li>
+      <ul>
+    
+  </ul>
+    
+  </ul>
+  
 
   
 </nav>
           
             
+  <h3>Related Topics</h3>
+  <ul>
+    
+      <li>Previous: <a href="getting-started/" title="previous chapter">
+        Getting Started
+      </a></li>
+    
+    
+      <li>Next: <a href="commands/gsea/" title="next chapter">
+        gsea
+      </a></li>
+    
+  </ul>
+
           
             <div id="searchbox" style="display: none;" role="search">
   <h3>Quick search</h3>
-  <form class="search" action="//search.html" method="get">
+  <form class="search" action="../../search.html" method="get">
     <input name="q" type="text">
     <input value="Go" type="submit">
   </form>
