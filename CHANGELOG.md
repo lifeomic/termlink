@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Adds a new sub-command: `code-system`
+
 ### Changed
 
 - Alters the output format for the `common` sub-command to JSON Lines

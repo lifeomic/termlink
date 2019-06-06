@@ -7,6 +7,7 @@ import textwrap
 
 from termlink import common
 from termlink import gsea
+from termlink import codesystem
 
 from termlink.configuration import Config
 
@@ -194,6 +195,26 @@ parser_snomedct.add_argument(
 )
 
 parser_snomedct.set_defaults(execute=SnomedCtCommand.execute)
+
+parser_codesystem = subparsers.add_parser(
+    "code-system",
+    help="Convert a FHIR CodeSystem Resource",
+    description="""
+    The CodeSystem resource is used to declare the existence of and describe a code system or code system supplement and its key properties, and optionally define a part or all of its content.
+    """,
+    epilog="""
+    [1] “4.8 Resource CodeSystem - Content.” CodeSystem - FHIR v4.0.0, Retrieved June 5, 2019 from www.hl7.org/fhir/codesystem.html.
+    """
+)
+
+parser_codesystem.add_argument(
+    "uri",
+    metavar="URI",
+    help="resource identifier for files"
+)
+
+parser_codesystem.set_defaults(execute=codesystem.execute)
+
 
 args = parser.parse_args()
 
