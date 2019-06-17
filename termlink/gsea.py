@@ -8,14 +8,15 @@ The download files for Geneset are provided at http://software.broadinstitute.or
 
 import csv
 import json
+import os
 
-from os import path
 from re import match
 from urllib.parse import urlparse
 
 from termlink.models import Coding, Relationship, RelationshipSchema
 
 _filename_regex = r'msigdb\..*\.symbols\.gmt'
+
 
 def _to_relationship(rec, index):
     """
@@ -45,7 +46,7 @@ def _to_relationship(rec, index):
     return Relationship('subsumes', source, target)
 
 
-def _get_relationships(uri):
+def _get_relationships(input_file):
     '''Extracts the system entities from the GSEA file
 
     Args:
@@ -54,7 +55,7 @@ def _get_relationships(uri):
     Returns:
         yields relationships
     '''
-    with open(uri.path) as f:
+    with open(input_file) as f:
         reader = csv.reader(f, delimiter='\t')
         for row in reader:
             for i in range(2, len(row)):
@@ -67,16 +68,26 @@ def execute(args):
     Args:
         args:   command line arguments from argparse
     '''
+
     uri = urlparse(args.uri)
     if uri.scheme != 'file':
         raise ValueError(f"uri.scheme '{uri.scheme}' is not supported")
 
-    filename = path.basename(uri.path) 
-    if not match(_filename_regex, filename):
+    input_file = uri.path
+    if not match(_filename_regex, os.path.basename(input_file)):
         raise ValueError(
-            f"File type is incorrect. Expected to match regular expression: '{_filename_regex}'. Found '{filename}'.")
+            f"File type is incorrect. Expected to match regular expression: '{_filename_regex}'. Found '{input_file}'.")
 
     schema = RelationshipSchema()
-    for relationship in _get_relationships(uri):
-        o = json.dumps(schema.dump(relationship)) 
-        print(o)
+
+    if args.output:
+        open('file.txt', 'w').close()
+
+    for relationship in _get_relationships(input_file):
+        o = json.dumps(schema.dump(relationship))
+        if args.output:
+            with open(args.output, 'a') as out_file:
+                out_file.write(o + '\n')
+        else:
+            print(o)
+

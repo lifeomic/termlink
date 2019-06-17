@@ -158,6 +158,13 @@ parser_gsea.add_argument(
     help="resource identifier for files"
 )
 
+parser_gsea.add_argument(
+    "--output",
+    dest='output',
+    help="name of file to generate",
+    required=False
+)
+
 parser_gsea.set_defaults(execute=gsea.execute)
 
 parser_snomedct = subparsers.add_parser(
