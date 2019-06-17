@@ -76,6 +76,14 @@ def _get_relationships(uri, system):
         for parent in term.parents:
             yield _to_relationship(parent, "specializes", term, system)
 
+    for term in ontology:
+        for relationship, references in term.other.items():
+            if relationship == 'equivalent_to':
+                for reference in references:
+                    other = ontology[reference]
+                    yield _to_relationship(other,   "equivalent",   term,   system)
+                    yield _to_relationship(term,    "equivalent",   other,  system)
+
 
 def execute(args):
     """
