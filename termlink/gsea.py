@@ -8,7 +8,7 @@ The download files for Geneset are provided at http://software.broadinstitute.or
 
 import csv
 import json
-import os
+from os import path
 
 from re import match
 from urllib.parse import urlparse
@@ -73,17 +73,17 @@ def execute(args):
     if uri.scheme != 'file':
         raise ValueError(f"uri.scheme '{uri.scheme}' is not supported")
 
-    input_file = uri.path
-    if not match(_filename_regex, os.path.basename(input_file)):
+    filename = path.basename(uri.path)
+    if not match(_filename_regex, filename):
         raise ValueError(
-            f"File type is incorrect. Expected to match regular expression: '{_filename_regex}'. Found '{input_file}'.")
+            f"File type is incorrect. Expected to match regular expression: '{_filename_regex}'. Found '{filename}'.")
 
     schema = RelationshipSchema()
 
     if args.output:
         open('file.txt', 'w').close()
 
-    for relationship in _get_relationships(input_file):
+    for relationship in _get_relationships(uri):
         o = json.dumps(schema.dump(relationship))
         if args.output:
             with open(args.output, 'a') as out_file:
