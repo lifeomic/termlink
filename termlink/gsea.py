@@ -80,9 +80,6 @@ def execute(args):
 
     schema = RelationshipSchema()
 
-    if args.output:
-        open('file.txt', 'w').close()
-
     for relationship in _get_relationships(uri):
         o = json.dumps(schema.dump(relationship))
         if args.output:
