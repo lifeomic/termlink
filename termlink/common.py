@@ -12,9 +12,29 @@ import json
 
 from urllib.parse import urlparse
 
+import validators
+
 from pronto import Ontology
 
 from termlink.models import Coding, Relationship, RelationshipSchema
+
+_SCOPE_TO_EQUIVALENCE = {
+    'equivalent_to': 'equivalent'
+}
+
+def _to_equivalence_from_scope(scope):
+    """Converts a scope into an equivalence
+
+    Args:
+        scope: a `pronto.Synonym.scope`
+
+    Returns:
+        an equivalence from https://www.hl7.org/fhir/valueset-concept-map-equivalence.html
+    """
+    try:
+        return _SCOPE_TO_EQUIVALENCE[scope]
+    except KeyError:
+        raise RuntimeError('scope \'%s\' is not supported' % scope)
 
 
 def _to_coding(term, system):
@@ -27,7 +47,10 @@ def _to_coding(term, system):
         a `termlink.models.Coding`
     """
     if ':' in term.id:
-        code = term.id.split(':')[1]
+        parts = term.id.rsplit(':', 1)
+        code = parts[1]
+        if validators.url(parts[0]):
+            system = parts[0]
     else:
         code = term.id
 
@@ -75,6 +98,13 @@ def _get_relationships(uri, system):
     for term in ontology:
         for parent in term.parents:
             yield _to_relationship(parent, "specializes", term, system)
+
+    for term in ontology:
+        for scope, references in term.other.items():
+            if scope in _SCOPE_TO_EQUIVALENCE:
+                for reference in references:
+                    relationship = _to_equivalence_from_scope(scope)
+                    yield _to_relationship(term, relationship, ontology[reference], system)
 
 
 def execute(args):
