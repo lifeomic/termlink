@@ -8,7 +8,7 @@ from nose.tools import eq_, ok_, raises
 
 from pronto import Term
 
-from termlink.common import _to_coding, _to_relationship, execute
+from termlink.common import _to_coding, _to_equivalence_from_scope, _to_relationship, execute
 from termlink.models import Coding, Relationship
 
 
@@ -24,7 +24,7 @@ def test_obo_format():
     uri = f"file://{path}"
     system = 'https://lifeomic.github.io/termlink/'
     output = execute(Namespace(uri=uri, system=system))
-    ok_(len(output) > 0)
+    ok_(len(output) == 3)
 
 
 def test_owl_format():
@@ -33,7 +33,7 @@ def test_owl_format():
     uri = f"file://{path}"
     system = 'https://lifeomic.github.io/termlink/'
     output = execute(Namespace(uri=uri, system=system))
-    ok_(len(output) > 0)
+    ok_(len(output) == 2)
 
 
 def test_to_coding():
@@ -58,6 +58,22 @@ def test_to_coding_without_colon():
 
     system = "http://snomed.info/sct"
     term = Term(id='25064002', name='Headache')
+
+    res = _to_coding(term, system)
+
+    exp = Coding(
+        system=system,
+        code='25064002',
+        display='Headache'
+    )
+
+    eq_(exp, res)
+
+def test_to_coding_with_system():
+    """Checks that a term with a system identifier is properly converted"""
+
+    system = "http://snomed.info/sct"
+    term = Term(id='http://snomed.info/sct:25064002', name='Headache')
 
     res = _to_coding(term, system)
 
@@ -95,3 +111,9 @@ def test_to_json():
     )
 
     eq_(exp, res)
+
+@raises(RuntimeError)
+def test_to_equivalence_from_scope():
+    """A RuntimeError is thrown for an unknown scope"""
+    _to_equivalence_from_scope("foobar")
+

@@ -9,3 +9,8 @@ name: Root
 id: 61e2ec3e_6102_44dc_9f3c_3445e45dbf9e
 name: Leaf
 is_a: 55f41bdb_1005_496c_aeae_ab127e78c525 ! Root
+
+[Term]
+id: e3f4d689-9da6-431f-b43e-5b3cf1a3651b
+name: Sister
+equivalent_to: 61e2ec3e_6102_44dc_9f3c_3445e45dbf9e ! Leaf

@@ -17,7 +17,7 @@ from termlink.models import Coding, Relationship, RelationshipSchema
 
 _filename_regex = r'msigdb\..*\.symbols\.gmt'
 
-def _to_relationship(rec, index):
+def _to_relationship(rec, index, equivalence='subsumes'):
     """
     Convert record in table to Relationship as a JSON object
 
@@ -42,7 +42,7 @@ def _to_relationship(rec, index):
         display=rec[0]
     )
 
-    return Relationship('subsumes', source, target)
+    return Relationship(equivalence, source, target)
 
 
 def _get_relationships(uri):
@@ -77,6 +77,10 @@ def execute(args):
             f"File type is incorrect. Expected to match regular expression: '{_filename_regex}'. Found '{filename}'.")
 
     schema = RelationshipSchema()
-    for relationship in _get_relationships(uri):
-        o = json.dumps(schema.dump(relationship)) 
+    relationships = _get_relationships(uri)
+    serialized = [json.dumps(schema.dump(r)) for r in relationships]
+
+    for o in serialized:
         print(o)
+
+    return serialized

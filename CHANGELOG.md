@@ -5,7 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## 0.9.1
+
+## Added
+
+- Adds support for 'equivalent_to' relationships in the `common` sub-command
+- Adds support for implicit system references in the `common` sub-command
+
+## 0.9.0
+
+### Added
+
+- Adds a new sub-command: `code-system`
 
 ### Changed
 
