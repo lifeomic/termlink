@@ -3,6 +3,7 @@
 from argparse import Namespace
 
 import pkg_resources
+import tempfile
 
 from nose.tools import eq_, ok_, raises
 
@@ -14,6 +15,14 @@ def test_execute():
     path = pkg_resources.resource_filename(__name__, "resources/msigdb.test.symbols.gmt")
     uri = f"file://{path}"
     output = execute(Namespace(uri=uri))
+    ok_(len(output) > 0)
+
+def test_execute_and_write_to_file():
+    "Tests the conversion of a 'msigdb.*.symbols.gmt' file"
+    path = pkg_resources.resource_filename(__name__, "resources/msigdb.test.symbols.gmt")
+    uri = f"file://{path}"
+    (_, tmp) = tempfile.mkstemp()
+    output = execute(Namespace(uri=uri, output=tmp))
     ok_(len(output) > 0)
 
 @raises(ValueError)
