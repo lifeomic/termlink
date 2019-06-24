@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Adds optional argument `--output` to `gsea` sub-command
+- Adds support for inverse relationship to the `common` sub-command
 
 ## 0.9.1
 

@@ -24,7 +24,7 @@ def test_obo_format():
     uri = f"file://{path}"
     system = 'https://lifeomic.github.io/termlink/'
     output = execute(Namespace(uri=uri, system=system))
-    ok_(len(output) == 3)
+    ok_(len(output) == 4)
 
 
 def test_owl_format():
