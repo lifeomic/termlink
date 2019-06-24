@@ -27,7 +27,7 @@ _SCOPE_TO_EQUIVALENCE = {
 }
 
 def _to_inverse_scope(scope):
-    """Converts a scope into it's inverse scope
+    """Converts a scope into its inverse scope
 
     Args:
         scope: a `pronto.Synonym.scope`
