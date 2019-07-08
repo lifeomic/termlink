@@ -64,13 +64,22 @@ def _to_coding(term, system):
     Returns:
         a `termlink.models.Coding`
     """
-    if ':' in term.id:
-        parts = term.id.rsplit(':', 1)
-        code = parts[1]
-        if validators.url(parts[0]):
-            system = parts[0]
+    _id = term.id
+    if ':' in _id:
+        if _id.endswith(':') and validators.url(_id[:-1]):
+            system = _id[:-1]
+            code = None
+        else:
+            parts = _id.rsplit(':', 1)
+            if validators.url(parts[0]):
+                system = parts[0]
+                code = parts[1]
+            else:
+                system = system
+                code = parts[1]
     else:
-        code = term.id
+        system = system
+        code = _id
 
     return Coding(
         system=system,
