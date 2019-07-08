@@ -69,8 +69,8 @@ def test_to_coding_without_colon():
 
     eq_(exp, res)
 
-def test_to_coding_with_system():
-    """Checks that a term with a system identifier is properly converted"""
+def test_to_coding_with_system_and_code():
+    """Checks that a term with a system and code identifier is properly converted"""
 
     system = "http://snomed.info/sct"
     term = Term(id='http://snomed.info/sct:25064002', name='Headache')
@@ -81,6 +81,21 @@ def test_to_coding_with_system():
         system=system,
         code='25064002',
         display='Headache'
+    )
+
+    eq_(exp, res)
+
+def test_to_coding_with_system():
+    """Checks that a term with a system identifier is properly converted"""
+
+    system = "http://snomed.info/sct"
+    term = Term(id='http://snomed.info/sct:', name='SNOMED-CT')
+
+    res = _to_coding(term, system)
+
+    exp = Coding(
+        system=system,
+        display='SNOMED-CT'
     )
 
     eq_(exp, res)
