@@ -14,6 +14,7 @@ from termlink.configuration import Config
 from termlink.rxnorm import Command as RxNormCommand
 from termlink.hpo import Command as HPOCommand
 from termlink.snomedct import Command as SnomedCtCommand
+from termlink.loinc import Command as LoincCommand
 
 configuration = Config()
 logger = configuration.logger
@@ -203,6 +204,34 @@ parser_snomedct.add_argument(
 
 parser_snomedct.set_defaults(execute=SnomedCtCommand.execute)
 
+
+parser_loinc = subparsers.add_parser(
+    "loinc",
+    help="Convert the 'LOINC' code system",
+    description="""
+    LOINC (Logical Observation Identifiers Names and Codes) was developed to provide a definitive standard for identifying clinical information in electronic reports. The LOINC database provides a set of universal names and ID codes for identifying laboratory and clinical test results in the context of existing HL7, ASTM E1238, and CEN TC251 observation report messages. One of the main goals of LOINC is to facilitate the exchange and pooling of results for clinical care, outcomes management, and research. LOINC codes are intended to identify the test result or clinical observation. Other fields in the message can transmit the identity of the source laboratory and special details about the sample. [1]
+    """,
+    epilog="""
+    [1] "Knowledge Base - LOINC.“ Retrieved Sep 1, 2020 from https://loinc.org/kb/faq/basics/
+    """
+)
+
+parser_loinc.add_argument(
+    "uri",
+    metavar="URI",
+    help="resource identifier for files"
+)
+
+parser_loinc.add_argument(
+    "--versioned",
+    dest='versioned',
+    action='store_true',
+    help="include 'version'"
+)
+
+parser_loinc.set_defaults(execute=LoincCommand.execute)
+
+
 parser_codesystem = subparsers.add_parser(
     "code-system",
     help="Convert a FHIR CodeSystem Resource",
@@ -221,7 +250,6 @@ parser_codesystem.add_argument(
 )
 
 parser_codesystem.set_defaults(execute=codesystem.execute)
-
 
 args = parser.parse_args()
 
