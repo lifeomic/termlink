@@ -1,15 +1,13 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python application
+name: Pull Request
 
 on: [push]
 
 jobs:
-  build:
-
+  Validate:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: setup
@@ -21,12 +19,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements-dev.txt
-    - name: clean
-      run: |
-        make clean
-    - name: lint
+    - name: Lint
       run: |
         make lint
-    - name: test
+    - name: Test
       run: |
         make test
