@@ -29,4 +29,4 @@ package:
 
 .PHONY: deploy
 deploy:
-	python -m twine upload dist/*
+	python -m twine upload dist/* --verbose
