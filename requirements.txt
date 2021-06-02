@@ -4,5 +4,5 @@ petl==1.6.8
 pronto==0.12.2
 ratelimit==2.2.1
 requests==2.21.0
-urllib3==1.24.2
+urllib3==1.26.5
 validators==0.12.6
