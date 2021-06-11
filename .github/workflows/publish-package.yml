@@ -7,6 +7,7 @@ on:
 
 jobs:
   Release:
+    if: ${{ github.head_ref }} == "master"
     runs-on: ubuntu-latest
     steps:
     - name: Checkout 
