@@ -8,10 +8,11 @@ DEFAULT = HTTPAdapter()
 
 
 def build(
-        min_pool_size=_DEFAULT_POOL_SIZE,
-        max_pool_size=_DEFAULT_POOL_SIZE,
-        is_blocking=False,
-        retry_policy=0):
+    min_pool_size=_DEFAULT_POOL_SIZE,
+    max_pool_size=_DEFAULT_POOL_SIZE,
+    is_blocking=False,
+    retry_policy=0,
+):
     """A helper method to build an adapter
 
     Args:
@@ -27,5 +28,5 @@ def build(
         pool_connections=min_pool_size,
         pool_maxsize=max_pool_size,
         pool_block=is_blocking,
-        max_retries=retry_policy
+        max_retries=retry_policy,
     )

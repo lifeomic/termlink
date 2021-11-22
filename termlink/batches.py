@@ -13,8 +13,10 @@ _logger = _configuration.logger
 _DEFAULT_RATE_LIMIT = 10
 _DEFAULT_RATE_LIMIT_PERIOD = 1
 
-_rate_limit = int(_configuration.get_property('API_RATE_LIMIT', _DEFAULT_RATE_LIMIT))
-_rate_limit_period = int(_configuration.get_property('API_RATE_LIMIT_PERIOD', _DEFAULT_RATE_LIMIT_PERIOD))
+_rate_limit = int(_configuration.get_property("API_RATE_LIMIT", _DEFAULT_RATE_LIMIT))
+_rate_limit_period = int(
+    _configuration.get_property("API_RATE_LIMIT_PERIOD", _DEFAULT_RATE_LIMIT_PERIOD)
+)
 
 
 def batch(iterable, n=1, sleep=_rate_limit_period):

@@ -18,13 +18,9 @@ from pronto import Ontology
 
 from termlink.models import Coding, Relationship, RelationshipSchema
 
-_SCOPE_TO_INVERSE_SCOPE = {
-    'equivalent_to': 'equivalent_to'
-}
+_SCOPE_TO_INVERSE_SCOPE = {"equivalent_to": "equivalent_to"}
 
-_SCOPE_TO_EQUIVALENCE = {
-    'equivalent_to': 'equivalent'
-}
+_SCOPE_TO_EQUIVALENCE = {"equivalent_to": "equivalent"}
 
 
 def _to_inverse_scope(scope):
@@ -39,7 +35,7 @@ def _to_inverse_scope(scope):
     try:
         return _SCOPE_TO_INVERSE_SCOPE[scope]
     except KeyError:
-        raise RuntimeError('scope \'%s\' is not supported' % scope)
+        raise RuntimeError("scope '%s' is not supported" % scope)
 
 
 def _to_equivalence_from_scope(scope):
@@ -54,7 +50,7 @@ def _to_equivalence_from_scope(scope):
     try:
         return _SCOPE_TO_EQUIVALENCE[scope]
     except KeyError:
-        raise RuntimeError('scope \'%s\' is not supported' % scope)
+        raise RuntimeError("scope '%s' is not supported" % scope)
 
 
 def _to_coding(term, system):
@@ -67,12 +63,12 @@ def _to_coding(term, system):
         a `termlink.models.Coding`
     """
     _id = term.id
-    if ':' in _id:
-        if _id.endswith(':') and validators.url(_id[:-1]):
+    if ":" in _id:
+        if _id.endswith(":") and validators.url(_id[:-1]):
             system = _id[:-1]
             code = None
         else:
-            parts = _id.rsplit(':', 1)
+            parts = _id.rsplit(":", 1)
             if validators.url(parts[0]):
                 system = parts[0]
                 code = parts[1]
@@ -83,11 +79,7 @@ def _to_coding(term, system):
         system = system
         code = _id
 
-    return Coding(
-        system=system,
-        code=code,
-        display=term.name
-    )
+    return Coding(system=system, code=code, display=term.name)
 
 
 def _to_relationship(source, equivalence, target, system):
@@ -133,12 +125,16 @@ def _get_relationships(uri, system):
             if scope in _SCOPE_TO_EQUIVALENCE:
                 for reference in references:
                     relationship = _to_equivalence_from_scope(scope)
-                    yield _to_relationship(term, relationship, ontology[reference], system)
+                    yield _to_relationship(
+                        term, relationship, ontology[reference], system
+                    )
             if scope in _SCOPE_TO_INVERSE_SCOPE:
                 inverse = _to_inverse_scope(scope)
                 for reference in references:
                     relationship = _to_equivalence_from_scope(inverse)
-                    yield _to_relationship(ontology[reference], relationship, term, system)
+                    yield _to_relationship(
+                        ontology[reference], relationship, term, system
+                    )
 
 
 def execute(args):
@@ -149,7 +145,7 @@ def execute(args):
         args:   command line arguments from argparse
     """
     uri = urlparse(args.uri)
-    if uri.scheme != 'file':
+    if uri.scheme != "file":
         raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
 
     schema = RelationshipSchema()

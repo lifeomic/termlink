@@ -26,13 +26,13 @@ def _to_equivalence_from_scope(scope):
     """
     try:
         return {
-            'BROAD': 'wider',
-            'NARROW': 'narrower',
-            'EXACT': 'equivalent',
-            'RELATED': 'relatedto'
+            "BROAD": "wider",
+            "NARROW": "narrower",
+            "EXACT": "equivalent",
+            "RELATED": "relatedto",
         }[scope]
     except KeyError:
-        raise RuntimeError('scope \'%s\' is not supported' % scope)
+        raise RuntimeError("scope '%s' is not supported" % scope)
 
 
 def _to_system(abbreviation):
@@ -45,12 +45,9 @@ def _to_system(abbreviation):
         a system identifier
     """
     try:
-        return {
-            'HP': 'http://www.human-phenotype-ontology.org/'
-        }[abbreviation]
+        return {"HP": "http://www.human-phenotype-ontology.org/"}[abbreviation]
     except KeyError:
-        raise RuntimeError(
-            'system abbreviation \'%s\' is not supported' % abbreviation)
+        raise RuntimeError("system abbreviation '%s' is not supported" % abbreviation)
 
 
 def _to_coding(term):
@@ -62,12 +59,8 @@ def _to_coding(term):
     Returns:
         a `termlink.models.Coding`
     """
-    (abbreviation, code) = term.id.split(':')
-    return Coding(
-        system=_to_system(abbreviation),
-        code=code,
-        display=term.name
-    )
+    (abbreviation, code) = term.id.split(":")
+    return Coding(system=_to_system(abbreviation), code=code, display=term.name)
 
 
 def _to_relationship(source, equivalence, target):
@@ -88,6 +81,7 @@ def _to_relationship(source, equivalence, target):
 
 class Command(SubCommand):
     "A command executor for Human Phenotype Ontology operations."
+
     @staticmethod
     def execute(args):
         uri = urlparse(args.uri)
@@ -98,8 +92,7 @@ class Command(SubCommand):
 
         relationships = service.get_relationships()
         schema = RelationshipSchema()
-        relationships = [schema.dump(relationship)
-                         for relationship in relationships]
+        relationships = [schema.dump(relationship) for relationship in relationships]
         print(json.dumps(relationships))
 
 
@@ -114,7 +107,7 @@ class Service(RelationshipService):
             skip_alt_ids: Skips 'alt_id' conversions if True
             skip_synonyms: Skips 'synonym' conversions if True
         """
-        if uri.scheme != 'file':
+        if uri.scheme != "file":
             raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
 
         self.uri = uri
@@ -143,24 +136,16 @@ class Service(RelationshipService):
         if not self.skip_alt_ids:
             for term in ontology:
                 for other, values in term.other.items():
-                    if other == 'alt_id':
+                    if other == "alt_id":
                         for value in values:
-                            target = Term(
-                                id=value,
-                                name=term.name,
-                                desc=term.desc
-                            )
+                            target = Term(id=value, name=term.name, desc=term.desc)
                             yield _to_relationship(term, "equal", target)
 
         # synonym relationships
         if not self.skip_synonyms:
             for term in ontology:
                 for synonym in term.synonyms:
-                    target = Term(
-                        id=term.id,
-                        name=synonym.desc,
-                        desc=term.desc
-                    )
+                    target = Term(id=term.id, name=synonym.desc, desc=term.desc)
                     equivalence = _to_equivalence_from_scope(synonym.scope)
                     yield _to_relationship(term, equivalence, target)
 
