@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 
 from termlink.models import Coding, Relationship, RelationshipSchema
 
+
 def _get_relationships(content):
     '''Extracts concept relationships from a CodeSystem
 
@@ -22,14 +23,14 @@ def _get_relationships(content):
     Returns:
         yields relationships
     '''
-    
+
     system = content['url']
     version = content['version']
 
     sources = content['concept']
     targets = [sources[-1]] + sources[0:-1]
     for source, target in zip(sources, targets):
-        
+
         source = Coding(
             system=system,
             version=version,
@@ -45,6 +46,7 @@ def _get_relationships(content):
         )
 
         yield Relationship('disjoint', source, target)
+
 
 def execute(args):
     '''Converts a FHIR CodeSystem Resource
@@ -67,5 +69,3 @@ def execute(args):
         print(o)
 
     return serialized
-
-    

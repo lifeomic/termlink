@@ -17,6 +17,7 @@ from termlink.models import Coding, Relationship, RelationshipSchema
 
 _filename_regex = r'msigdb\..*\.symbols\.gmt'
 
+
 def _to_relationship(rec, index, equivalence='subsumes'):
     """
     Convert record in table to Relationship as a JSON object
@@ -79,12 +80,12 @@ def execute(args):
 
     schema = RelationshipSchema()
     relationships = _get_relationships(uri)
-    serialized = [ json.dumps(schema.dump(r)) for r in relationships ]
+    serialized = [json.dumps(schema.dump(r)) for r in relationships]
 
     for o in serialized:
         print(o)
         if "output" in args:
             with open(args.output, 'a') as f:
                 f.write(o + '\n')
-            
+
     return serialized

@@ -19,12 +19,14 @@ from termlink.models import Coding, Relationship, RelationshipSchema
 
 _SYSTEM = 'http://loinc.org'
 
+
 def _find_loinc_table_core_file(path: str):
     path = os.path.join(path, '**/LoincTableCore.csv')
     paths = glob.glob(path)
     if not paths:
         raise RuntimeError("Unable to find LoincTableCore.csv")
     return paths[0]
+
 
 def _find_multi_axial_hierarchy_file(path: str):
     path = os.path.join(path, '**/MultiAxialHierarchy.csv')
@@ -33,6 +35,7 @@ def _find_multi_axial_hierarchy_file(path: str):
         raise RuntimeError("Unable to find MultiAxialHierarchy.csv")
     return paths[0]
 
+
 def _parse_version(path: str):
     try:
         pattern = re.compile(r'Loinc_([\d.]*)_MultiAxialHierarchy')
@@ -40,6 +43,7 @@ def _parse_version(path: str):
         return match.group(1)
     except Exception as e:
         raise RuntimeError('Unable to parse version from path', path) from e
+
 
 def _to_json(rec: etl.Record):
     """Converts a record to a formatted `Relationship` in JSON form.
@@ -51,15 +55,15 @@ def _to_json(rec: etl.Record):
         A new record containing a single field, which is the JSON object
     """
     coding = Coding(
-        system=_SYSTEM, 
+        system=_SYSTEM,
         code=rec['source.CODE'],
         display=rec['source.CODE_TEXT'],
         version=rec.get('version')
     )
 
     parent = Coding(
-        system=_SYSTEM, 
-        code=rec['source.IMMEDIATE_PARENT'], 
+        system=_SYSTEM,
+        code=rec['source.IMMEDIATE_PARENT'],
         display=rec['target.CODE_TEXT'],
         version=rec.get('version')
     )

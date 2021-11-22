@@ -100,13 +100,13 @@ parser_rxnorm = subparsers.add_parser(
     description="""
     RxNorm provides normalized names for clinical drugs and links its names to
     many of the drug vocabularies commonly used in pharmacy management and drug
-    interaction software, including those of First Databank, Micromedex, 
-    Gold Standard Drug Database, and Multum. By providing links between these 
-    vocabularies, RxNorm can mediate messages between systems not using the 
-    same software and vocabulary. [1] 
+    interaction software, including those of First Databank, Micromedex,
+    Gold Standard Drug Database, and Multum. By providing links between these
+    vocabularies, RxNorm can mediate messages between systems not using the
+    same software and vocabulary. [1]
 
-    Additional source vocabularies, aside from RxNorm, must be specified using 
-    the --vocabulary option. The full list of available source vocabularies is 
+    Additional source vocabularies, aside from RxNorm, must be specified using
+    the --vocabulary option. The full list of available source vocabularies is
     available at https://www.nlm.nih.gov/research/umls/rxnorm/docs/2019/rxnorm_doco_full_2019-1.html#s3_0.
 
     By default concepts that are not suppressed, specified by the 'N' flag, are
@@ -146,7 +146,7 @@ parser_gsea = subparsers.add_parser(
     "gsea",
     help="Convert the 'Gene Set Enrichment Analysis Ontology'",
     description="""
-    The Gene Set Enrichment Analysis Ontology (GSEA) project provides an ontology of genes grouped by a 
+    The Gene Set Enrichment Analysis Ontology (GSEA) project provides an ontology of genes grouped by a
     relational concept. [1]
     """,
     epilog="""
@@ -173,8 +173,8 @@ parser_snomedct = subparsers.add_parser(
     "snomed-ct",
     help="Convert the 'SNOMED-CT' code system",
     description="""
-    SNOMED CT is a clinical terminology with global scope covering a wide range of clinical specialties, disciplines and requirements. As a result of its broad scope, one of the benefits of SNOMED CT is a reduction of specialty boundary effects that arise from use of different terminologies or coding systems by different clinicians or departments. 
-    This allows wider sharing and reuse of structured clinical information. Another benefit of SNOMED CT is that the same data can be processed and presented in ways that serve different purposes. For example, clinical records 
+    SNOMED CT is a clinical terminology with global scope covering a wide range of clinical specialties, disciplines and requirements. As a result of its broad scope, one of the benefits of SNOMED CT is a reduction of specialty boundary effects that arise from use of different terminologies or coding systems by different clinicians or departments.
+    This allows wider sharing and reuse of structured clinical information. Another benefit of SNOMED CT is that the same data can be processed and presented in ways that serve different purposes. For example, clinical records
     represented using SNOMED CT can be processed and presented in different ways to support direct patient care, clinical audit, research, epidemiology, management and service planning. Additionally, the global scope of SNOMED CT reduces geographical boundary effects arising from the use of different terminologies or coding systems in different organizations and countries. [1]
     """,
     epilog="""
@@ -257,4 +257,3 @@ if hasattr(args, 'execute'):
     args.execute(args)
 else:
     parser.print_help()
-
