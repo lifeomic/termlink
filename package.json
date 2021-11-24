@@ -12,6 +12,7 @@
     "test": "make test",
     "inspect": "open tests/cover/index.html",
     "site": "pip install -r requirements-site.txt && mkdocs build",
-    "postversion": "git push --tags"
+    "postversion": "git push --tags",
+    "clean": "rm -rf build dist termlink.egg-info"
   }
 }
