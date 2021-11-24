@@ -154,4 +154,3 @@ This project is licensed under the MIT - see the [LICENSE](LICENSE.txt) file for
 ## Acknowledgments
 
 [TODO]
-Add a comment to readme.md.
