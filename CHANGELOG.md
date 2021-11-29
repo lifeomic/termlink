@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Flake8 tests
 - Reformatting
+- Why won't you build?
 
 ## 0.9.3
 
