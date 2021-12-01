@@ -7,8 +7,8 @@ import logging
 import os
 
 # Relative location of configuration file
-_PROGRAM_CONFIG = '../config.ini'
-_LOGGER_FILENAME = 'stderr.log'
+_PROGRAM_CONFIG = "../config.ini"
+_LOGGER_FILENAME = "stderr.log"
 
 
 class Config:
@@ -24,7 +24,7 @@ class Config:
     4. Runtime system environment variables
     """
 
-    def __init__(self, environment=os.getenv("ENV", 'DEFAULT').upper()):
+    def __init__(self, environment=os.getenv("ENV", "DEFAULT").upper()):
 
         # Create an application logger
         logger = logging.getLogger("termlink")

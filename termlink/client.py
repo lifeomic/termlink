@@ -17,18 +17,21 @@ _DEFAULT_RATE_LIMIT_MAX_RETRIES = 3
 
 _configuration = Config()
 
-_rate_limit = int(_configuration.get_property('API_RATE_LIMIT', _DEFAULT_RATE_LIMIT))
-_rate_limit_period = int(_configuration.get_property('API_RATE_LIMIT_PERIOD', _DEFAULT_RATE_LIMIT_PERIOD))
-_rate_limit_max_retries = int(_configuration.get_property('API_RATE_LIMIT_MAX_RETIRES', _DEFAULT_RATE_LIMIT_MAX_RETRIES))
+_rate_limit = int(_configuration.get_property("API_RATE_LIMIT", _DEFAULT_RATE_LIMIT))
+_rate_limit_period = int(
+    _configuration.get_property("API_RATE_LIMIT_PERIOD", _DEFAULT_RATE_LIMIT_PERIOD)
+)
+_rate_limit_max_retries = int(
+    _configuration.get_property(
+        "API_RATE_LIMIT_MAX_RETIRES", _DEFAULT_RATE_LIMIT_MAX_RETRIES
+    )
+)
 
 
 class Client:
     """An HTTP client"""
 
-    def __init__(
-            self,
-            url,
-            adapter=DEFAULT_ADAPTER):
+    def __init__(self, url, adapter=DEFAULT_ADAPTER):
         """
         Creates a new API client.
 

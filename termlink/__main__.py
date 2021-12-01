@@ -25,35 +25,27 @@ parser = argparse.ArgumentParser(
     """
 )
 
-subparsers = parser.add_subparsers(
-    title="Commands",
-    metavar=""
-)
+subparsers = parser.add_subparsers(title="Commands", metavar="")
 
 parser_common = subparsers.add_parser(
     "common",
     help="Convert a common format ontology",
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=textwrap.dedent("""
+    description=textwrap.dedent(
+        """
     Convert an ontology represented in a common format.
 
     Supported format types:
       - OBO (obo)
       - RDF/XML (owl)
-    """)
+    """
+    ),
 )
 
-parser_common.add_argument(
-    "uri",
-    metavar="URI",
-    help="resource identifier for files"
-)
+parser_common.add_argument("uri", metavar="URI", help="resource identifier for files")
 
 parser_common.add_argument(
-    "-s",
-    "--system",
-    help="identity of the terminology system",
-    required=True
+    "-s", "--system", help="identity of the terminology system", required=True
 )
 
 parser_common.set_defaults(execute=common.execute)
@@ -66,27 +58,23 @@ parser_hpo = subparsers.add_parser(
     """,
     epilog="""
     [1] Human Phenotype Ontology. Retrieved April 29, 2019, from https://hpo.jax.org/app/help/introduction
-    """
+    """,
 )
 
-parser_hpo.add_argument(
-    "uri",
-    metavar="URI",
-    help="resource identifier for files"
-)
+parser_hpo.add_argument("uri", metavar="URI", help="resource identifier for files")
 
 parser_hpo.add_argument(
     "--skip-alt-ids",
-    dest='skip_alt_ids',
-    action='store_true',
-    help="skips 'alt_id' references"
+    dest="skip_alt_ids",
+    action="store_true",
+    help="skips 'alt_id' references",
 )
 
 parser_hpo.add_argument(
     "--skip-synonyms",
-    dest='skip_synonyms',
-    action='store_true',
-    help="skips 'synonym' references"
+    dest="skip_synonyms",
+    action="store_true",
+    help="skips 'synonym' references",
 )
 
 parser_hpo.set_defaults(execute=HPOCommand.execute)
@@ -115,29 +103,25 @@ parser_rxnorm = subparsers.add_parser(
     """,
     epilog="""
     [1] RxNorm. Retrieved April 22, 2019, from https://www.nlm.nih.gov/research/umls/rxnorm/
-    """
+    """,
 )
 
-parser_rxnorm.add_argument(
-    "uri",
-    metavar="URI",
-    help="resource identifier for files"
-)
+parser_rxnorm.add_argument("uri", metavar="URI", help="resource identifier for files")
 
 parser_rxnorm.add_argument(
     "-v",
     "--vocabulary",
-    action='append',
-    default=['RXNORM'],
-    help="use an additional source vocabulary (default: 'RXNORM')"
+    action="append",
+    default=["RXNORM"],
+    help="use an additional source vocabulary (default: 'RXNORM')",
 )
 
 parser_rxnorm.add_argument(
     "-s",
     "--suppress",
-    action='append',
-    default=['N'],
-    help="unset the provided suppress flag (default: 'N')"
+    action="append",
+    default=["N"],
+    help="unset the provided suppress flag (default: 'N')",
 )
 
 parser_rxnorm.set_defaults(execute=RxNormCommand.execute)
@@ -151,20 +135,13 @@ parser_gsea = subparsers.add_parser(
     """,
     epilog="""
     [1] Gene Set Enrichment Analysis Ontology. Retrieved May 8, 2019, from http://software.broadinstitute.org/gsea/msigdb/collections.jsp
-    """
+    """,
 )
 
-parser_gsea.add_argument(
-    "uri",
-    metavar="URI",
-    help="resource identifier for files"
-)
+parser_gsea.add_argument("uri", metavar="URI", help="resource identifier for files")
 
 parser_gsea.add_argument(
-    "--output",
-    dest='output',
-    help="name of file to generate",
-    required=False
+    "--output", dest="output", help="name of file to generate", required=False
 )
 
 parser_gsea.set_defaults(execute=gsea.execute)
@@ -179,27 +156,23 @@ parser_snomedct = subparsers.add_parser(
     """,
     epilog="""
     [1] Snomed-CT. Retrieved May 9, 2019 from https://confluence.ihtsdotools.org/display/DOCSTART/3.+Using+SNOMED+CT+in+Clinical+Information
-    """
+    """,
 )
 
-parser_snomedct.add_argument(
-    "uri",
-    metavar="URI",
-    help="resource identifier for files"
-)
+parser_snomedct.add_argument("uri", metavar="URI", help="resource identifier for files")
 
 parser_snomedct.add_argument(
     "--versioned",
-    dest='versioned',
-    action='store_true',
-    help="includes 'version' mapping"
+    dest="versioned",
+    action="store_true",
+    help="includes 'version' mapping",
 )
 
 parser_snomedct.add_argument(
     "--include-inactive",
-    dest='include_inactive',
-    action='store_true',
-    help="includes 'inactive' relationship"
+    dest="include_inactive",
+    action="store_true",
+    help="includes 'inactive' relationship",
 )
 
 parser_snomedct.set_defaults(execute=SnomedCtCommand.execute)
@@ -213,20 +186,13 @@ parser_loinc = subparsers.add_parser(
     """,
     epilog="""
     [1] "Knowledge Base - LOINC.“ Retrieved Sep 1, 2020 from https://loinc.org/kb/faq/basics/
-    """
+    """,
 )
 
-parser_loinc.add_argument(
-    "uri",
-    metavar="URI",
-    help="resource identifier for files"
-)
+parser_loinc.add_argument("uri", metavar="URI", help="resource identifier for files")
 
 parser_loinc.add_argument(
-    "--versioned",
-    dest='versioned',
-    action='store_true',
-    help="include 'version'"
+    "--versioned", dest="versioned", action="store_true", help="include 'version'"
 )
 
 parser_loinc.set_defaults(execute=LoincCommand.execute)
@@ -240,20 +206,18 @@ parser_codesystem = subparsers.add_parser(
     """,
     epilog="""
     [1] “4.8 Resource CodeSystem - Content.” CodeSystem - FHIR v4.0.0, Retrieved June 5, 2019 from www.hl7.org/fhir/codesystem.html.
-    """
+    """,
 )
 
 parser_codesystem.add_argument(
-    "uri",
-    metavar="URI",
-    help="resource identifier for files"
+    "uri", metavar="URI", help="resource identifier for files"
 )
 
 parser_codesystem.set_defaults(execute=codesystem.execute)
 
 args = parser.parse_args()
 
-if hasattr(args, 'execute'):
+if hasattr(args, "execute"):
     args.execute(args)
 else:
     parser.print_help()

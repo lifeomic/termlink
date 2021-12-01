@@ -16,10 +16,29 @@ from os import listdir
 from dataclasses import replace
 from urllib.parse import urlparse
 
-_STATED_RELATIONSHIP_FILE_FIELDS = ["id", "effectiveTime", "active", "moduleId", "sourceId", "destinationId",
-                                    "relationshipGroup", "typeId", "characteristicTypeId", "modifierId"]
-_DESCRIPTION_FILE_FIELDS = ["id", "effectiveTime", "active", "moduleId", "conceptId", "languageCode", "typeId",
-                            "term", "caseSignificanceId"]
+_STATED_RELATIONSHIP_FILE_FIELDS = [
+    "id",
+    "effectiveTime",
+    "active",
+    "moduleId",
+    "sourceId",
+    "destinationId",
+    "relationshipGroup",
+    "typeId",
+    "characteristicTypeId",
+    "modifierId",
+]
+_DESCRIPTION_FILE_FIELDS = [
+    "id",
+    "effectiveTime",
+    "active",
+    "moduleId",
+    "conceptId",
+    "languageCode",
+    "typeId",
+    "term",
+    "caseSignificanceId",
+]
 _IS_A_TYPE_ID = "116680003"
 _FULLY_SPECIFIED_NAME_TYPE_ID = "900000000000003001"
 _FIRST_LETTER_CAPITAL_CASE_ID = "900000000000020002"
@@ -40,19 +59,19 @@ def _to_json(rec):
 
     source = Coding(
         system="http://snomed.info/sct",
-        code=rec['sourceId'],
-        display=rec['source.term'],
-        version=rec['effectiveTime'] if rec['versioned'] else None
+        code=rec["sourceId"],
+        display=rec["source.term"],
+        version=rec["effectiveTime"] if rec["versioned"] else None,
     )
 
     target = Coding(
         system="http://snomed.info/sct",
-        code=rec['destinationId'],
-        display=rec['target.term'],
-        version=rec['effectiveTime'] if rec['versioned'] else None
+        code=rec["destinationId"],
+        display=rec["target.term"],
+        version=rec["effectiveTime"] if rec["versioned"] else None,
     )
 
-    relationship = Relationship('subsumes', source, target)
+    relationship = Relationship("subsumes", source, target)
 
     schema = RelationshipSchema()
     return [json.dumps(schema.dump(relationship))]
@@ -75,7 +94,7 @@ class Command(SubCommand):
         service = Service(uri, args.versioned, args.include_inactive)
         table = service.get_relationships()
         if table:
-            etl.io.totext(table, encoding='utf8', template='{relationship}\n')
+            etl.io.totext(table, encoding="utf8", template="{relationship}\n")
 
 
 class Service(RelationshipService):
@@ -91,7 +110,7 @@ class Service(RelationshipService):
             include_inactive: Flag to indicate whether to transform inactive relationship or not. Default is active only.
         """
 
-        if uri.scheme != 'file':
+        if uri.scheme != "file":
             raise ValueError("'uri.scheme' %s not supported" % uri.scheme)
 
         self.uri = uri
@@ -102,7 +121,13 @@ class Service(RelationshipService):
         for file in files:
             if file_type in file:
                 return os.path.join(self.uri.path, file)
-        raise ValueError("Unable to find \"" + file_type + "\" file in the directory files (" + str(files) + ")!")
+        raise ValueError(
+            'Unable to find "'
+            + file_type
+            + '" file in the directory files ('
+            + str(files)
+            + ")!"
+        )
 
     def get_relationships(self):
         """
@@ -111,38 +136,55 @@ class Service(RelationshipService):
         files = listdir(self.uri.path)
 
         path = self.get_file_name(files, "StatedRelationship")
-        relationship = etl \
-            .fromcsv(path, delimiter='\t') \
-            .setheader(_STATED_RELATIONSHIP_FILE_FIELDS) \
-            .select(lambda rec: rec['typeId'] == _IS_A_TYPE_ID)
+        relationship = (
+            etl.fromcsv(path, delimiter="\t")
+            .setheader(_STATED_RELATIONSHIP_FILE_FIELDS)
+            .select(lambda rec: rec["typeId"] == _IS_A_TYPE_ID)
+        )
 
         # Include inactive if requested
         if not self.include_inactive:
-            relationship = relationship \
-                .select(lambda rec: rec['active'] == '1')
+            relationship = relationship.select(lambda rec: rec["active"] == "1")
 
-        relationship = relationship \
-            .groupselectlast(['sourceId', 'destinationId', 'typeId']) \
-            .cut('effectiveTime', 'sourceId', 'destinationId')
+        relationship = relationship.groupselectlast(
+            ["sourceId", "destinationId", "typeId"]
+        ).cut("effectiveTime", "sourceId", "destinationId")
 
         if relationship.nrows() == 0:
             return None
 
         path = self.get_file_name(files, "Description")
-        description = etl \
-            .fromcsv(path, delimiter='\t') \
-            .setheader(_DESCRIPTION_FILE_FIELDS) \
-            .select(lambda rec: rec['typeId'] == _FULLY_SPECIFIED_NAME_TYPE_ID) \
-            .select(lambda rec: rec['caseSignificanceId'] == _FIRST_LETTER_CAPITAL_CASE_ID) \
-            .sort(['conceptId', 'effectiveTime'], reverse=True) \
-            .cut('conceptId', 'term')
+        description = (
+            etl.fromcsv(path, delimiter="\t")
+            .setheader(_DESCRIPTION_FILE_FIELDS)
+            .select(lambda rec: rec["typeId"] == _FULLY_SPECIFIED_NAME_TYPE_ID)
+            .select(
+                lambda rec: rec["caseSignificanceId"] == _FIRST_LETTER_CAPITAL_CASE_ID
+            )
+            .sort(["conceptId", "effectiveTime"], reverse=True)
+            .cut("conceptId", "term")
+        )
 
-        relationship_with_description = relationship \
-            .lookupjoin(description, lkey="sourceId", rkey="conceptId", rprefix="source.") \
-            .lookupjoin(description, lkey="destinationId", rkey="conceptId", rprefix="target.") \
-            .addfield('versioned', self.versioned) \
-            .rowmap(_to_json, ['effectiveTime', 'sourceId', 'destinationId', 'source.term', 'target.term',
-                               'versioned']) \
-            .setheader(['relationship'])
+        relationship_with_description = (
+            relationship.lookupjoin(
+                description, lkey="sourceId", rkey="conceptId", rprefix="source."
+            )
+            .lookupjoin(
+                description, lkey="destinationId", rkey="conceptId", rprefix="target."
+            )
+            .addfield("versioned", self.versioned)
+            .rowmap(
+                _to_json,
+                [
+                    "effectiveTime",
+                    "sourceId",
+                    "destinationId",
+                    "source.term",
+                    "target.term",
+                    "versioned",
+                ],
+            )
+            .setheader(["relationship"])
+        )
 
         return relationship_with_description

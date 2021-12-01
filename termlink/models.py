@@ -20,6 +20,7 @@ class CodingSchema(Schema):
         code:       string field
         display     string field
     """
+
     type = fields.Str()
     system = fields.Str()
     version = fields.Str()
@@ -28,7 +29,7 @@ class CodingSchema(Schema):
 
 
 @dataclass(frozen=True)
-class Coding():
+class Coding:
     """
     A 'Coding' object as defined by the API.
 
@@ -39,7 +40,8 @@ class Coding():
         code (str):     symbol in syntax defined by the system
         display (str):  representation defined by the system
     """
-    type: str = 'coding'
+
+    type: str = "coding"
     system: str = None
     version: str = None
     code: str = None
@@ -54,13 +56,14 @@ class RelationshipSchema(Schema):
         source: `CodingSchema` field
         target: `CodingSchema` field
     """
+
     equivalence = fields.Str()
     source = fields.Nested(CodingSchema())
     target = fields.Nested(CodingSchema())
 
 
 @dataclass(frozen=True)
-class Relationship():
+class Relationship:
     """
     A 'Relationship' object as defined by the API.
 
@@ -69,6 +72,7 @@ class Relationship():
         source object:       The source concept.
         target object:       The target concept.
     """
+
     equivalence: str
     source: Coding
     target: Coding
