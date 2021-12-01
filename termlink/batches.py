@@ -35,7 +35,7 @@ def batch(iterable, n=1, sleep=_rate_limit_period):
     sleep = sleep if 0 < sleep < limit else limit
     _logger.info("sleep set to %f seconds", sleep)
 
-    l = len(iterable)
+    l = len(iterable)  # noqa: E741
     for ndx in range(0, l, n):
         yield iterable[ndx : min(ndx + n, l)]
         _logger.info("Processed %s of %s", min(ndx + n, l), l)

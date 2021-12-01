@@ -26,6 +26,7 @@ _SCOPE_TO_EQUIVALENCE = {
     'equivalent_to': 'equivalent'
 }
 
+
 def _to_inverse_scope(scope):
     """Converts a scope into its inverse scope
 
@@ -39,6 +40,7 @@ def _to_inverse_scope(scope):
         return _SCOPE_TO_INVERSE_SCOPE[scope]
     except KeyError:
         raise RuntimeError('scope \'%s\' is not supported' % scope)
+
 
 def _to_equivalence_from_scope(scope):
     """Converts a scope into an equivalence

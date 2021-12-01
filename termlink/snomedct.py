@@ -78,7 +78,6 @@ class Command(SubCommand):
             etl.io.totext(table, encoding='utf8', template='{relationship}\n')
 
 
-
 class Service(RelationshipService):
     """Converts the SNOMED CT database"""
 

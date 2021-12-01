@@ -257,4 +257,3 @@ if hasattr(args, 'execute'):
     args.execute(args)
 else:
     parser.print_help()
-
