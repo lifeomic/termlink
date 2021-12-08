@@ -44,7 +44,7 @@ pipeline {
     }
 
     stage('build package') {
-      when { anyOf { branch 'master'; changeRequest target: 'master' } }
+      when { branch 'master' }
       steps {
         unstash 'termlink-source'
         dir('termlink') {
