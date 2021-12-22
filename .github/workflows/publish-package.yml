@@ -9,6 +9,7 @@ jobs:
   Release:
     if: ${{ github.head_ref }} == "master"
     runs-on: ubuntu-latest
+    environment: pypi-prod
     steps:
     - name: Checkout 
       uses: actions/checkout@v2
