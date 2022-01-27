@@ -125,7 +125,7 @@ This will trigger the deployment pipeline on `Travis CI`.
 
 ## Contributing
 
-[TODO]
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
