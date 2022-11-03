@@ -27,15 +27,15 @@ def _find_loinc_table_core_file(path: str):
     return paths[0]
 
 def _find_multi_axial_hierarchy_file(path: str):
-    path = os.path.join(path, '**/MultiAxialHierarchy.csv')
-    paths = glob.glob(path)
+    path = os.path.join(path, '**/ComponentHierarchyBySystem.csv')
+    paths = glob.glob(path, recursive=True)
     if not paths:
-        raise RuntimeError("Unable to find MultiAxialHierarchy.csv")
+        raise RuntimeError("Unable to find ComponentHierarchyBySystem.csv")
     return paths[0]
 
 def _parse_version(path: str):
     try:
-        pattern = re.compile(r'Loinc_([\d.]*)_MultiAxialHierarchy')
+        pattern = re.compile(r'Loinc_([\d.]*)')
         match = pattern.search(path)
         return match.group(1)
     except Exception as e:
