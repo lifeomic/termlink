@@ -3,6 +3,6 @@ dataclasses-json==0.2.2
 petl==1.6.8
 pronto==0.12.2
 ratelimit==2.2.1
-requests==2.21.0
+requests==2.31.0
 urllib3<1.25,>=1.21.1
 validators==0.12.6
